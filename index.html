@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Каталог элементов навигации ГКБ7</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F5F3}
+a{color:#007A3D}a:hover{color:#005C2E}
+.chip{font:inherit;font-size:13px;line-height:1.2;min-height:44px;padding:0 12px;border-radius:10px;border:1px solid #D5D9D5;background:#FFFFFF;color:#1B1F1D;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.chip:hover{border-color:#007A3D}
+.chip[aria-pressed="true"]{background:#007A3D;border-color:#007A3D;color:#FFFFFF}
+.chip[aria-pressed="true"] .n{color:#D9F0E3}
+.chip:disabled{color:#8A918D;background:#F4F5F3;cursor:default;border-color:#E4E7E4}
+.chip .n{font-size:12px;color:#5C6460;font-variant-numeric:tabular-nums}
+.seg{font:inherit;font-size:14px;font-weight:500;min-height:44px;padding:0 16px;border:0;border-radius:8px;background:transparent;color:#3F4743;cursor:pointer}
+.seg[aria-pressed="true"]{background:#FFFFFF;color:#1B1F1D;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.sw{font:inherit;font-size:14px;font-weight:500;color:#1B1F1D;background:none;border:0;padding:0 4px;min-height:44px;display:inline-flex;align-items:center;gap:10px;cursor:pointer}
+.sw .track{position:relative;width:51px;height:31px;border-radius:16px;background:#C9CEC9;transition:background .2s;flex:none}
+.sw .knob{position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#FFFFFF;box-shadow:0 2px 4px rgba(0,0,0,.25);transition:transform .2s}
+.sw[aria-checked="true"] .track{background:#007A3D}
+.sw[aria-checked="true"] .knob{transform:translateX(20px)}
+.idbtn{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13px;font-weight:500;color:#005C2E;background:#E6F3EB;border:0;border-radius:6px;padding:0 8px;min-height:32px;cursor:pointer;white-space:nowrap}
+.idbtn:hover{background:#CFE9D9}
+.row:hover{background:#FAFBFA}
+.card{transition:border-color .15s}
+.card:hover{border-color:#007A3D}
+.cardbtn{font:inherit;text-align:left;background:none;border:0;padding:0;cursor:pointer;color:inherit;display:flex;flex-direction:column;gap:12px;width:100%}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid #007A3D;outline-offset:2px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<noscript>Для работы каталога нужен JavaScript.</noscript>
+<script type="text/plain" id="tpl">
+<div style="font-family: Inter, system-ui, sans-serif; color: #1B1F1D; background: #F4F5F3; min-height: 100vh">
+  <header style="background: #FFFFFF; border-bottom: 1px solid #E1E4E1">
+    <div style="max-width: 1440px; margin: 0 auto; padding: 24px 32px; display: flex; flex-wrap: wrap; gap: 16px 32px; align-items: flex-end; justify-content: space-between; box-sizing: border-box">
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <div style="font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: #007A3D">ГКБ №7 · Система навигации</div>
+        <h1 style="margin: 0; font-size: 30px; line-height: 1.15; font-weight: 700">Каталог элементов навигации</h1>
+        <p style="margin: 0; font-size: 14px; color: #5C6460; max-width: 640px">Фильтруйте указатели по этажам, блокам и техническим характеристикам. Этаж и блок берутся из ID: q1<b>10</b>-<b>1</b>-81 — блок 10, этаж 1, элемент №81. Этаж 111 означает «все этажи».</p>
+      </div>
+      <div style="display: flex; gap: 24px; flex-wrap: wrap">
+        <div style="display: flex; flex-direction: column; gap: 2px">
+          <div style="font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums">{{stats.shown}}</div>
+          <div style="font-size: 12px; color: #5C6460">из {{stats.total}} элементов</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 2px">
+          <div style="font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums">{{stats.types}}</div>
+          <div style="font-size: 12px; color: #5C6460">типов в выборке</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div style="max-width: 1440px; margin: 0 auto; padding: 24px 32px 64px; display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; box-sizing: border-box">
+
+    <aside aria-label="Фильтры" style="flex: 1 1 300px; max-width: 360px; min-width: 0; display: flex; flex-direction: column; gap: 20px; background: #FFFFFF; border: 1px solid #E1E4E1; border-radius: 14px; padding: 20px; box-sizing: border-box">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+        <h2 style="margin: 0; font-size: 16px; font-weight: 700">Фильтры</h2>
+        <button type="button" class="chip" onClick="{{reset}}" disabled="{{noFilters}}">Сбросить</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <label for="q" style="font-size: 13px; font-weight: 600">Поиск</label>
+        <input id="q" type="search" value="{{q}}" onInput="{{onQ}}" placeholder="ID, тип, размер…" style="font: inherit; font-size: 14px; min-height: 44px; padding: 0 12px; border: 1px solid #C9CEC9; border-radius: 10px; background: #FFFFFF; color: #1B1F1D; box-sizing: border-box; width: 100%"/>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <label for="typeSel" style="font-size: 13px; font-weight: 600">Тип</label>
+        <select id="typeSel" value="{{typeSel}}" onChange="{{onType}}" style="font: inherit; font-size: 14px; min-height: 44px; padding: 0 10px; border: 1px solid #C9CEC9; border-radius: 10px; background: #FFFFFF; color: #1B1F1D; width: 100%">
+          <option value="">Все типы</option>
+          <sc-for list="{{typeOptions}}" as="to" hint-placeholder-count="5">
+            <option value="{{to.value}}">{{to.label}}</option>
+          </sc-for>
+        </select>
+      </div>
+
+      <sc-for list="{{facets}}" as="f" hint-placeholder-count="6">
+        <div role="group" aria-label="{{f.label}}" style="display: flex; flex-direction: column; gap: 8px; padding-top: 16px; border-top: 1px solid #ECEEEC">
+          <div style="font-size: 13px; font-weight: 600">{{f.label}}</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px">
+            <sc-for list="{{f.options}}" as="o" hint-placeholder-count="4">
+              <sc-if value="{{o.show}}" hint-placeholder-val="{{ true }}">
+                <button type="button" class="chip" aria-pressed="{{o.pressed}}" disabled="{{o.disabled}}" onClick="{{o.toggle}}">{{o.label}}<span class="n">{{o.count}}</span></button>
+              </sc-if>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </aside>
+
+    <main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between">
+        <div role="group" aria-label="Вид" style="display: inline-flex; gap: 4px; padding: 4px; background: #E7EAE7; border-radius: 12px">
+          <button type="button" class="seg" aria-pressed="{{viewList}}" onClick="{{showList}}">Элементы</button>
+          <button type="button" class="seg" aria-pressed="{{viewTypes}}" onClick="{{showTypes}}">Типы</button>
+        </div>
+        <div style="flex: 1 1 auto; min-width: 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: center">
+          <sc-for list="{{activeChips}}" as="ac" hint-placeholder-count="0">
+            <button type="button" class="chip" aria-pressed="true" onClick="{{ac.remove}}" aria-label="Убрать фильтр {{ac.label}}">{{ac.label}}<span class="n" aria-hidden="true">✕</span></button>
+          </sc-for>
+        </div>
+        <div style="margin-left: auto; display: flex; flex-wrap: wrap; gap: 4px 20px; align-items: center">
+          <button type="button" class="sw" role="switch" aria-checked="{{goboOn}}" onClick="{{toggleGobo}}">Гобо–проекции<span class="track" aria-hidden="true"><span class="knob"></span></span></button>
+          <button type="button" class="sw" role="switch" aria-checked="{{streetOn}}" onClick="{{toggleStreet}}">Уличные указатели<span class="track" aria-hidden="true"><span class="knob"></span></span></button>
+        </div>
+      </div>
+
+      <sc-if value="{{loading}}" hint-placeholder-val="{{ false }}">
+        <div style="padding: 48px; text-align: center; color: #5C6460; background: #FFFFFF; border: 1px solid #E1E4E1; border-radius: 14px">Загрузка данных спецификации…</div>
+      </sc-if>
+      <sc-if value="{{error}}" hint-placeholder-val="{{ false }}">
+        <div style="padding: 24px; color: #8A1F11; background: #FFF4F2; border: 1px solid #F2C9C2; border-radius: 14px">Не удалось загрузить данные: {{errorText}}</div>
+      </sc-if>
+      <sc-if value="{{empty}}" hint-placeholder-val="{{ false }}">
+        <div style="padding: 48px; text-align: center; color: #5C6460; background: #FFFFFF; border: 1px solid #E1E4E1; border-radius: 14px">Под выбранные условия не подходит ни один элемент.</div>
+      </sc-if>
+
+      <sc-if value="{{showTable}}" hint-placeholder-val="{{ true }}">
+        <div style="background: #FFFFFF; border: 1px solid #E1E4E1; border-radius: 14px; overflow-x: auto">
+          <table style="width: 100%; min-width: 960px; border-collapse: collapse; font-size: 13px">
+            <thead>
+              <tr style="text-align: left; color: #5C6460; font-size: 12px">
+                <th scope="col" style="padding: 12px 16px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Эскиз</th>
+                <th scope="col" style="padding: 12px 8px; font-weight: 600; border-bottom: 1px solid #E1E4E1">ID</th>
+                <th scope="col" style="padding: 12px 8px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Этаж</th>
+                <th scope="col" style="padding: 12px 8px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Блок</th>
+                <th scope="col" style="padding: 12px 8px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Тип</th>
+                <th scope="col" style="padding: 12px 8px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Класс</th>
+                <th scope="col" style="padding: 12px 8px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Вид элемента</th>
+                <th scope="col" style="padding: 12px 8px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Конструкция</th>
+                <th scope="col" style="padding: 12px 8px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Габариты</th>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{rows}}" as="r" hint-placeholder-count="8">
+                <tr class="row" style="border-bottom: 1px solid #EEF0EE; vertical-align: middle">
+                  <td style="padding: 8px 16px">
+                    <div style="position: relative; width: 104px; height: 56px; background: #F0F1EF; border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden">
+                      <sc-if value="{{r.hasQty}}" hint-placeholder-val="{{ false }}">
+                        <span style="position: absolute; right: 3px; bottom: 3px; font-size: 10px; line-height: 1; font-weight: 600; padding: 2px 4px; border-radius: 4px; background: rgba(27,31,29,.78); color: #FFFFFF; font-variant-numeric: tabular-nums">{{r.qtyLabel}}</span>
+                      </sc-if>
+                      <sc-if value="{{r.img}}" hint-placeholder-val="{{ true }}">
+                        <img src="{{r.img}}" alt="Эскиз {{r.type}}" loading="lazy" style="max-width: 100%; max-height: 100%; object-fit: contain"/>
+                      </sc-if>
+                      <sc-if value="{{r.noImg}}" hint-placeholder-val="{{ false }}">
+                        <span style="font-size: 11px; color: #5C6460">нет эскиза</span>
+                      </sc-if>
+                    </div>
+                  </td>
+                  <td style="padding: 8px"><button type="button" class="idbtn" onClick="{{r.open}}" aria-label="Подробнее об элементе {{r.id}}">{{r.id}}</button></td>
+                  <td style="padding: 8px; white-space: nowrap">{{r.floorLabel}}</td>
+                  <td style="padding: 8px; white-space: nowrap">{{r.blockLabel}}</td>
+                  <td style="padding: 8px; white-space: nowrap; font-weight: 600">{{r.type}}</td>
+                  <td style="padding: 8px; white-space: nowrap; color: #3F4743">{{r.cls}}</td>
+                  <td style="padding: 8px; min-width: 140px; font-weight: 500">{{r.title}}</td>
+                  <td style="padding: 8px; min-width: 180px; color: #3F4743">{{r.sub}}</td>
+                  <td style="padding: 8px 16px 8px 8px; white-space: pre; line-height: 1.5; font-variant-numeric: tabular-nums">{{r.dims}}</td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{showCards}}" hint-placeholder-val="{{ false }}">
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px">
+          <sc-for list="{{cards}}" as="c" hint-placeholder-count="6">
+            <article class="card" style="background: #FFFFFF; border: 1px solid #E1E4E1; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+              <button type="button" class="cardbtn" onClick="{{c.open}}" aria-label="Характеристики {{c.type}}">
+                <div style="height: 150px; background: #F0F1EF; border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 10px; box-sizing: border-box">
+                  <sc-if value="{{c.img}}" hint-placeholder-val="{{ true }}">
+                    <img src="{{c.img}}" alt="Эскиз {{c.type}}" loading="lazy" style="max-width: 100%; max-height: 100%; object-fit: contain"/>
+                  </sc-if>
+                  <sc-if value="{{c.noImg}}" hint-placeholder-val="{{ false }}">
+                    <span style="font-size: 12px; color: #5C6460">нет описания в спецификации</span>
+                  </sc-if>
+                </div>
+                <div style="display: flex; justify-content: space-between; gap: 8px; align-items: baseline">
+                  <span style="font-weight: 700; font-size: 15px">{{c.type}}</span>
+                  <span style="font-size: 12px; color: #5C6460">{{c.cls}}</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 2px">
+                  <span style="font-weight: 500; font-size: 14px">{{c.title}}</span>
+                  <span style="font-size: 13px; color: #5C6460">{{c.sub}}</span>
+                  <span style="font-size: 13px; color: #3F4743; white-space: pre-line; font-variant-numeric: tabular-nums">{{c.dims}}</span>
+                </div>
+              </button>
+              <div style="font-size: 12px; font-weight: 600; color: #5C6460">{{c.countLabel}}</div>
+              <div style="display: flex; flex-wrap: wrap; gap: 6px">
+                <sc-for list="{{c.ids}}" as="ci" hint-placeholder-count="3">
+                  <button type="button" class="idbtn" onClick="{{ci.open}}">{{ci.id}}</button>
+                </sc-for>
+              </div>
+            </article>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <p style="margin: 8px 0 0; font-size: 12px; color: #5C6460">Источник: «Описание знаков ГКБ7» (PDF). Полный перечень ID — реестр на стр. 60–80; характеристики — страницы типов 4–59. Для типов 55–61 описания в документе нет. Таблички–номера type_63 (108 шт. на 109 пронумерованных кабинетов) в реестре PDF отсутствуют и показаны одной строкой с общим ID q1-111-1; их распределение по кабинетам, этажам и блокам взято из файла «список-кабинетов-гкб7.xlsx», и количество считается по фильтрам «Этаж» и «Блок».</p>
+    </main>
+  </div>
+
+  <sc-if value="{{modal}}" hint-placeholder-val="{{ false }}">
+    <div style="position: fixed; inset: 0; background: rgba(20,24,22,.45); display: flex; align-items: flex-start; justify-content: center; padding: 32px 16px; overflow-y: auto; z-index: 10; box-sizing: border-box">
+      <div role="dialog" aria-modal="true" aria-label="{{d.heading}}" style="background: #FFFFFF; border-radius: 16px; width: 100%; max-width: 880px; padding: 24px; display: flex; flex-direction: column; gap: 20px; box-sizing: border-box; box-shadow: 0 20px 60px rgba(0,0,0,.25)">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px">
+          <div style="display: flex; flex-direction: column; gap: 4px">
+            <div style="font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: #007A3D">{{d.kicker}}</div>
+            <h2 style="margin: 0; font-size: 24px; font-weight: 700; font-family: 'IBM Plex Mono', ui-monospace, monospace">{{d.heading}}</h2>
+            <div style="font-size: 14px; color: #3F4743">{{d.title}} · {{d.sub}}</div>
+          </div>
+          <button type="button" class="chip" onClick="{{closeModal}}" aria-label="Закрыть">Закрыть</button>
+        </div>
+
+        <sc-if value="{{d.hasImg}}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; flex-wrap: wrap; gap: 12px; background: #F0F1EF; border-radius: 12px; padding: 16px; justify-content: center">
+            <sc-for list="{{d.imgs}}" as="im" hint-placeholder-count="1">
+              <figure style="margin: 0; flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 8px">
+                <img src="{{im.src}}" alt="{{im.cap}}" style="max-width: 100%; max-height: 320px; object-fit: contain"/>
+                <figcaption style="font-size: 12px; color: #5C6460">{{im.cap}}</figcaption>
+              </figure>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{d.isEl}}" hint-placeholder-val="{{ true }}">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px">
+            <sc-for list="{{d.elFacts}}" as="ef" hint-placeholder-count="4">
+              <div style="background: #F4F5F3; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 4px">
+                <span style="font-size: 12px; color: #5C6460">{{ef.k}}</span>
+                <span style="font-size: 15px; font-weight: 600">{{ef.v}}</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <div style="display: flex; flex-direction: column; gap: 0">
+          <h3 style="margin: 0 0 8px; font-size: 15px; font-weight: 700">Технические характеристики</h3>
+          <sc-for list="{{d.specs}}" as="sp" hint-placeholder-count="8">
+            <div style="display: flex; flex-wrap: wrap; gap: 4px 16px; padding: 10px 0; border-top: 1px solid #ECEEEC; font-size: 14px">
+              <span style="flex: 0 0 220px; color: #5C6460">{{sp.k}}</span>
+              <span style="flex: 1 1 260px; min-width: 0; white-space: pre-line">{{sp.v}}</span>
+            </div>
+          </sc-for>
+        </div>
+
+        <sc-if value="{{d.hasRooms}}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <h3 style="margin: 0; font-size: 15px; font-weight: 700">{{d.roomsLabel}}</h3>
+            <div style="max-height: 320px; overflow: auto; border: 1px solid #E1E4E1; border-radius: 10px">
+              <table style="width: 100%; min-width: 560px; border-collapse: collapse; font-size: 13px">
+                <thead>
+                  <tr style="text-align: left; color: #5C6460; font-size: 12px; background: #F4F5F3">
+                    <th scope="col" style="padding: 8px 12px; font-weight: 600">Номер на табличке</th>
+                    <th scope="col" style="padding: 8px; font-weight: 600">Помещение</th>
+                    <th scope="col" style="padding: 8px; font-weight: 600">Наименование</th>
+                    <th scope="col" style="padding: 8px; font-weight: 600">Этаж</th>
+                    <th scope="col" style="padding: 8px 12px 8px 8px; font-weight: 600">Блок</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <sc-for list="{{d.rooms}}" as="rm" hint-placeholder-count="5">
+                    <tr style="border-top: 1px solid #EEF0EE">
+                      <td style="padding: 6px 12px; font-weight: 600; font-variant-numeric: tabular-nums">{{rm.plate}}</td>
+                      <td style="padding: 6px 8px; white-space: nowrap; font-family: 'IBM Plex Mono', ui-monospace, monospace">{{rm.room}}</td>
+                      <td style="padding: 6px 8px">{{rm.name}}</td>
+                      <td style="padding: 6px 8px">{{rm.floor}}</td>
+                      <td style="padding: 6px 12px 6px 8px">{{rm.block}}</td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{d.hasList}}" hint-placeholder-val="{{ false }}">
+          <div style="background: #E6F3EB; border-radius: 10px; padding: 12px 16px; font-size: 14px">Перечень кабинетов с номерами: <a href="{{d.listUrl}}" target="_blank" rel="noopener">открыть файл на Яндекс Диске</a></div>
+        </sc-if>
+
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <h3 style="margin: 0; font-size: 15px; font-weight: 700">{{d.siblingsLabel}}</h3>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px">
+            <sc-for list="{{d.siblings}}" as="sb" hint-placeholder-count="4">
+              <button type="button" class="idbtn" aria-pressed="{{sb.current}}" onClick="{{sb.open}}" title="{{sb.where}}">{{sb.id}}</button>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</script>
+<script src="data.js"></script>
+<script>
+(function(){
+var root=document.getElementById('app'),comp=null,pending=false;
+window.DCLogic=function(props){this.props=props||{};};
+window.DCLogic.prototype.setState=function(o){this.state=Object.assign({},this.state,o);schedule();};
+window.DCLogic.prototype.forceUpdate=function(){schedule();};
+function schedule(){if(pending)return;pending=true;Promise.resolve().then(function(){pending=false;render();});}
+var doc=new DOMParser().parseFromString('<root>'+document.getElementById('tpl').textContent+'</root>','application/xml');
+if(doc.getElementsByTagName('parsererror').length){root.textContent='Template error';console.error(doc.documentElement.textContent);}
+function get(path,sc){path=path.trim();if(path==='true')return true;if(path==='false')return false;var p=path.split('.'),v;
+  for(var s=sc;s;s=s.parent){if(p[0] in s.vars){v=s.vars[p[0]];break;}}
+  for(var i=1;i<p.length&&v!=null;i++)v=v[p[i]];return v;}
+var WHOLE=/^\s*\{\{([^}]+)\}\}\s*$/,HOLE=/\{\{([^}]+)\}\}/g;
+function interp(t,sc){return t.replace(HOLE,function(_,p){var v=get(p,sc);return v==null?'':String(v);});}
+function build(node,sc,out){
+  if(node.nodeType===3){var t=interp(node.nodeValue,sc);if(t)out.appendChild(document.createTextNode(t));return;}
+  if(node.nodeType!==1)return;
+  var name=node.localName,i,c;
+  if(name==='sc-if'){if(get(node.getAttribute('value').replace(/[{}]/g,''),sc))for(c=node.firstChild;c;c=c.nextSibling)build(c,sc,out);return;}
+  if(name==='sc-for'){var list=get(node.getAttribute('list').replace(/[{}]/g,''),sc)||[],as=node.getAttribute('as');
+    for(i=0;i<list.length;i++){var vars={};vars[as]=list[i];vars.$index=i;for(c=node.firstChild;c;c=c.nextSibling)build(c,{vars:vars,parent:sc},out);}return;}
+  var el=document.createElement(name),later=null;
+  for(i=0;i<node.attributes.length;i++){var a=node.attributes[i],n=a.name,m=WHOLE.exec(a.value),v=m?get(m[1],sc):interp(a.value,sc);
+    if(/^on[A-Z]/.test(n)){if(typeof v==='function')el.addEventListener(n.slice(2).toLowerCase(),v);}
+    else if(n==='disabled'){if(v&&v!=='false')el.disabled=true;}
+    else if(n==='value'&&(name==='select'||name==='input')){later=v;}
+    else if(v!=null&&v!==false)el.setAttribute(n,v===true?'':String(v));}
+  for(c=node.firstChild;c;c=c.nextSibling)build(c,sc,el);
+  if(later!=null)el.value=later;
+  out.appendChild(el);}
+function render(){
+  var ae=document.activeElement,fid=ae&&ae.id,ss=null,se=null;
+  try{if(fid&&ae.selectionStart!=null){ss=ae.selectionStart;se=ae.selectionEnd;}}catch(e){}
+  var frag=document.createDocumentFragment(),sc={vars:comp.renderVals(),parent:null};
+  for(var c=doc.documentElement.firstChild;c;c=c.nextSibling)build(c,sc,frag);
+  root.replaceChildren(frag);
+  if(fid){var n=document.getElementById(fid);if(n){n.focus({preventScroll:true});try{if(ss!=null)n.setSelectionRange(ss,se);}catch(e){}}}
+  document.documentElement.style.overflow=sc.vars.modal?'hidden':'';
+}
+window.__start=function(C){comp=new C({});render();if(comp.componentDidMount)comp.componentDidMount();
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&comp.state.open)comp.setState({open:null});});};
+})();
+</script>
+<script>
+
+const DATA_URL = '/_blob/b59873d08356f52a8269005a2358b44d';
+const FLOOR_ORDER = ['0','1','2','3','5','6','street','any'];
+const LOC_KEYS = ['floor', 'block'];
+const NA = 'Не указано';
+const FACETS = [
+  { key: 'floor', label: 'Этаж', get: (e) => e.floor, fmt: (v) => v === 'street' ? 'Улица' : v + ' этаж', sort: (a, b) => FLOOR_ORDER.indexOf(a) - FLOOR_ORDER.indexOf(b) },
+  { key: 'block', label: 'Блок', get: (e) => e.block == null ? 'street' : String(e.block), fmt: (v) => v === 'street' ? 'Улица' : 'Блок ' + v, sort: (a, b) => (a === 'street' ? 99 : +a) - (b === 'street' ? 99 : +b) },
+  { key: 'title', label: 'Вид элемента', get: (e, t) => t.title },
+  { key: 'placement', label: 'Размещение', get: (e, t) => t.placement },
+  { key: 'sides', label: 'Стороны', get: (e, t) => t.sides || NA },
+  { key: 'light', label: 'Подсветка', get: (e, t) => t.light },
+  { key: 'height', label: 'Высота монтажа', get: (e, t) => t.height || NA },
+  { key: 'mountGroup', label: 'Крепление', get: (e, t) => t.mountGroup || NA },
+  { key: 'face', label: 'Лицевая сторона', get: (e, t) => t.face || NA },
+  { key: 'cls', label: 'Класс', get: (e) => e.cls || NA }
+];
+const EMPTY_TYPE = { title: 'Тип не указан', sub: null, cls: null, placement: NA, light: NA, sides: null, dims: null, height: null, mount: null, mountGroup: null, img: [], pages: [], spec: false };
+const typeNum = (k) => k ? parseInt(String(k).replace('type_', ''), 10) : 999;
+const floorLabel = (f) => f === 'any' ? 'Все этажи' : f === 'street' ? 'Улица' : f + ' этаж';
+const qtyOf = (e) => e.qty || 1;
+const blocksLabel = (part, all) => { const p = distinctOf(part, 'block'); return p.length && p.length === distinctOf(all, 'block').length ? 'Все блоки' : p.join(', '); };
+const platesOf = (rooms) => Object.keys(rooms.reduce((m, r) => { m[r.floor + '|' + r.block + '|' + r.plate] = 1; return m; }, {})).length;
+const distinctOf = (list, k) => Object.keys(list.reduce((m, r) => { m[r[k]] = 1; return m; }, {})).sort((a, b) => a - b);
+const cmpEl = (a, b) => (FLOOR_ORDER.indexOf(a.floor) - FLOOR_ORDER.indexOf(b.floor)) || ((a.block || 0) - (b.block || 0)) || (a.n - b.n);
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { data: null, error: null, q: '', sel: {}, typeSel: '', view: 'list', open: null, showStreet: false, showGobo: false };
+  }
+  componentDidMount() {
+    Promise.resolve({ok:true,json:function(){return Promise.resolve(JSON.parse(JSON.stringify(window.NAV_DATA)));}}).then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then((data) => {
+        data.elements.forEach((e) => { if (/^q\d+-111-/.test(e.id)) { e.any = true; e.floor = 'any'; e.block = null; } if (e.rooms) e.qty = platesOf(e.rooms); });
+        Object.keys(data.types).forEach((k) => { const t = data.types[k]; if (t.dims) t.dims = t.dims.split(' + ').join('\n'); });
+        this.setState({ data });
+      })
+      .catch((err) => this.setState({ error: String(err && err.message || err) }));
+  }
+  toggle(key, val) {
+    const cur = (this.state.sel[key] || []).slice();
+    const i = cur.indexOf(val);
+    if (i >= 0) cur.splice(i, 1); else cur.push(val);
+    this.setState({ sel: Object.assign({}, this.state.sel, { [key]: cur }) });
+  }
+  typeOf(e) { return (this.state.data && this.state.data.types[e.type]) || EMPTY_TYPE; }
+  roomsFor(e, skipKey) {
+    const { sel } = this.state;
+    return (e.rooms || []).filter((r) => LOC_KEYS.every((k) => k === skipKey || !(sel[k] && sel[k].length) || sel[k].indexOf(r[k]) >= 0));
+  }
+  qtyIn(e, skipKey) { return e.rooms ? platesOf(this.roomsFor(e, skipKey)) : qtyOf(e); }
+  matches(e, skipKey) {
+    const t = this.typeOf(e);
+    const { sel, q, typeSel } = this.state;
+    if (typeSel && e.type !== typeSel) return false;
+    for (const f of FACETS) {
+      if (f.key === skipKey) continue;
+      const s = sel[f.key];
+      if (e.any && LOC_KEYS.indexOf(f.key) >= 0) continue;
+      if (s && s.length && s.indexOf(f.get(e, t)) < 0) return false;
+    }
+    if (q) {
+      const hay = [e.id, e.type, e.cls, e.file, t.title, t.sub, t.dims, floorLabel(e.floor)].join(' ').toLowerCase();
+      const terms = q.toLowerCase().split(/\s+/).filter(Boolean);
+      for (const term of terms) if (hay.indexOf(term) < 0) return false;
+    }
+    if (e.rooms && this.roomsFor(e, skipKey).length === 0) return false;
+    return true;
+  }
+  renderVals() {
+    const { data, error, q, sel, typeSel, view, open, showStreet, showGobo } = this.state;
+    const els = data ? data.elements.filter((e) => (showStreet || e.floor !== 'street') && (showGobo || e.cls !== 'gobo-1')) : [];
+    const allTypes = data ? data.types : {};
+    const types = {};
+    Object.keys(allTypes).forEach((k) => { if ((showStreet || allTypes[k].placement !== 'Уличный') && (showGobo || allTypes[k].cls !== 'gobo-1')) types[k] = allTypes[k]; });
+    const filtered = els.filter((e) => this.matches(e, null)).sort(cmpEl);
+
+    const facets = FACETS.map((f) => {
+      const all = {};
+      const loc = LOC_KEYS.indexOf(f.key) >= 0;
+      els.forEach((e) => {
+        if (loc && e.rooms) e.rooms.forEach((r) => { all[r[f.key]] = all[r[f.key]] || 0; });
+        else if (!(loc && e.any)) all[f.get(e, this.typeOf(e))] = 0;
+      });
+      let anyCount = 0;
+      els.forEach((e) => {
+        if (!this.matches(e, f.key)) return;
+        if (loc && e.rooms) { const vs = {}; this.roomsFor(e, f.key).forEach((r) => { vs[r[f.key]] = 1; }); Object.keys(vs).forEach((v) => { all[v] += 1; }); }
+        else if (loc && e.any) anyCount += 1; else all[f.get(e, this.typeOf(e))] += 1;
+      });
+      if (anyCount) Object.keys(all).forEach((v) => { all[v] += anyCount; });
+      const uni = {};
+      (data ? data.elements : []).forEach((e) => {
+        if (loc && e.rooms) e.rooms.forEach((r) => { uni[r[f.key]] = 1; });
+        else if (!(loc && e.any)) uni[f.get(e, this.typeOf(e))] = 1;
+      });
+      let keys = Object.keys(uni);
+      keys.sort(f.sort || ((a, b) => (a === NA) - (b === NA) || a.localeCompare(b, 'ru', { numeric: true })));
+      const s = sel[f.key] || [];
+      return {
+        label: f.label,
+        options: keys.map((v) => ({
+          label: f.fmt ? f.fmt(v) : v,
+          show: v in all,
+          count: all[v] || 0,
+          pressed: s.indexOf(v) >= 0 ? 'true' : 'false',
+          disabled: !all[v] && s.indexOf(v) < 0,
+          toggle: () => this.toggle(f.key, v)
+        }))
+      };
+    });
+
+    const activeChips = [];
+    FACETS.forEach((f) => (sel[f.key] || []).forEach((v) => activeChips.push({ label: f.label + ': ' + (f.fmt ? f.fmt(v) : v), remove: () => this.toggle(f.key, v) })));
+    if (typeSel) activeChips.push({ label: 'Тип: ' + typeSel, remove: () => this.setState({ typeSel: '' }) });
+
+    const typeKeys = Object.keys(types).sort((a, b) => typeNum(a) - typeNum(b));
+    const typeOptions = typeKeys.map((k) => ({ value: k, label: k + ' — ' + types[k].title + (types[k].dims ? ', ' + types[k].dims : '') }));
+
+    const openEl = (id, idx) => () => this.setState({ open: { kind: 'el', id: id, idx: idx } });
+    const rows = filtered.map((e) => {
+      const t = this.typeOf(e);
+      return {
+        id: e.id, hasQty: !!e.qty, qtyLabel: e.qty ? this.qtyIn(e, null) + ' шт.' : '', type: e.type || '—', cls: e.cls || '—', title: t.title, sub: t.sub || '—',
+        dims: t.dims || '—', height: t.height || '—', mount: t.mount || '—',
+        floorLabel: e.rooms ? distinctOf(this.roomsFor(e, null), 'floor').join(', ') + ' этаж' : floorLabel(e.floor),
+        blockLabel: e.rooms ? blocksLabel(this.roomsFor(e, null), e.rooms) : (e.block == null ? '—' : e.block),
+        img: e.design || (t.img && t.img[0] ? t.img[0] : ''), noImg: !(e.design || (t.img && t.img[0])),
+        open: openEl(e.id, els.indexOf(e))
+      };
+    });
+
+    const byType = {};
+    filtered.forEach((e) => { const k = e.type || '—'; (byType[k] = byType[k] || []).push(e); });
+    const cards = Object.keys(byType).sort((a, b) => typeNum(a) - typeNum(b)).map((k) => {
+      const t = types[k] || EMPTY_TYPE;
+      const list = byType[k];
+      return {
+        type: k, cls: t.cls || '—', title: t.title, sub: t.sub || '—', dims: t.dims || 'Габариты не указаны',
+        img: t.img && t.img[0] ? t.img[0] : '', noImg: !(t.img && t.img[0]),
+        countLabel: list.reduce((s, e) => s + this.qtyIn(e, null), 0) + ' шт. в выборке',
+        ids: list.map((e) => ({ id: e.id, open: openEl(e.id, els.indexOf(e)) })),
+        open: () => this.setState({ open: { kind: 'type', id: k } })
+      };
+    });
+
+    let d = null;
+    if (open && data) {
+      const el = open.kind === 'el' ? els[open.idx] : null;
+      const tk = el ? el.type : open.id;
+      const t = types[tk] || EMPTY_TYPE;
+      const specRows = [
+        ['Тип', tk || '—'], ['Класс', t.cls || (el && el.cls)], ['Вид элемента', t.title], ['Конструкция', t.sub],
+        ['Габариты', t.dims], ['Высота от пола', t.height], ['Лицевая сторона', t.face], ['Задняя сторона', t.back],
+        ['Торец', t.edge], ['Каркас', t.frame], ['Основание', t.base], ['Защита', t.protection],
+        ['Крепление', t.mount], ['Способ нанесения', t.print], ['Подсветка', t.placement === 'Световая проекция' ? 'гобо-проекция' : t.light],
+        ['Проектор', t.projector], ['Макс. электропотребление', t.power],
+        ['Страница спецификации', t.pages && t.pages.length ? t.pages.join(', ') : 'нет описания в документе']
+      ].filter((r) => r[1]).map((r) => ({ k: r[0], v: r[1] }));
+      const sibs = els.filter((e) => e.type === tk).sort(cmpEl);
+      const elRooms = el && el.rooms ? this.roomsFor(el, null) : [];
+      const elFacts = el && el.rooms ? [
+        { k: 'Этажи', v: distinctOf(elRooms, 'floor').join(', ') || '—' },
+        { k: 'Блоки', v: blocksLabel(elRooms, el.rooms) || '—' },
+        { k: 'Количество табличек', v: platesOf(elRooms) + ' из ' + platesOf(el.rooms) + ' шт.' },
+        { k: 'Реестр', v: 'общий ID на все таблички; распределение — список-кабинетов-гкб7.xlsx' }
+      ] : el && el.any ? [
+        { k: 'Этаж', v: 'Все этажи' },
+        { k: 'Размещение', v: 'Все пронумерованные кабинеты' },
+        { k: 'Количество', v: el.qty + ' шт.' },
+        { k: 'Реестр', v: 'общий ID на все таблички; в реестре PDF отсутствует' }
+      ] : el ? [
+        { k: 'Этаж', v: floorLabel(el.floor) },
+        { k: 'Блок', v: el.block == null ? 'Улица' : String(el.block) },
+        { k: 'Порядковый номер', v: String(el.n) + (/f$/.test(el.id) ? ' (флажок)' : '') },
+        { k: 'Количество', v: qtyOf(el) + ' шт.' },
+        { k: 'Исходный файл', v: el.file },
+        { k: 'Реестр', v: 'стр. ' + el.regPage + (el.dupNote ? ' · ID встречается в реестре дважды' : '') }
+      ] : [];
+      d = {
+        isEl: !!el, kicker: el ? 'Элемент навигации' : 'Тип элемента', heading: el ? el.id : (tk || '—'),
+        type: tk || '', title: t.title, sub: t.sub || (t.cls || ''),
+        hasImg: !!((el && el.design) || (t.img && t.img.length)),
+        imgs: el && el.design ? [{ src: el.design, cap: '' }] : (t.img || []).map((src) => ({ src: src, cap: 'Дизайн не найден — чертёж типа ' + (tk || '') + ' из спецификации' })),
+        elFacts: elFacts, specs: specRows,
+        listUrl: t.listUrl || '', hasList: !!t.listUrl,
+        hasRooms: elRooms.length > 0,
+        roomsLabel: 'Кабинеты в выборке: ' + elRooms.length + ', табличек: ' + platesOf(elRooms) + ' (один номер на несколько кабинетов — одна табличка на входе в блок)',
+        rooms: elRooms.slice().sort((a, b) => (a.floor - b.floor) || (a.block - b.block) || String(a.plate).localeCompare(String(b.plate), 'ru', { numeric: true })),
+        siblingsLabel: 'Все элементы типа ' + (tk || '—') + ' (' + sibs.reduce((s, e) => s + qtyOf(e), 0) + ' шт.)',
+        siblings: sibs.map((e) => ({ id: e.id, where: floorLabel(e.floor) + (e.block == null ? '' : ', блок ' + e.block), current: el && e === el ? 'true' : 'false', open: openEl(e.id, els.indexOf(e)) }))
+      };
+    }
+
+    const noFilters = !q && !typeSel && FACETS.every((f) => !(sel[f.key] || []).length);
+    return {
+      stats: { shown: filtered.length, total: els.length, types: Object.keys(byType).length },
+      q: q, onQ: (ev) => this.setState({ q: ev.target.value }),
+      typeSel: typeSel, onType: (ev) => this.setState({ typeSel: ev.target.value }),
+      typeOptions: typeOptions, facets: facets, activeChips: activeChips, noFilters: noFilters,
+      reset: () => this.setState({ q: '', sel: {}, typeSel: '' }),
+      viewList: view === 'list' ? 'true' : 'false', viewTypes: view === 'types' ? 'true' : 'false',
+      showList: () => this.setState({ view: 'list' }), showTypes: () => this.setState({ view: 'types' }),
+      goboOn: showGobo ? 'true' : 'false',
+      toggleGobo: () => {
+        if (showGobo) {
+          const ns = Object.assign({}, sel);
+          if (ns.placement) ns.placement = ns.placement.filter((v) => v !== 'Световая проекция');
+          if (ns.cls) ns.cls = ns.cls.filter((v) => v !== 'gobo-1');
+          const ts = typeSel && allTypes[typeSel] && allTypes[typeSel].cls === 'gobo-1' ? '' : typeSel;
+          this.setState({ showGobo: false, sel: ns, typeSel: ts, open: null });
+        } else this.setState({ showGobo: true, open: null });
+      },
+      streetOn: showStreet ? 'true' : 'false',
+      toggleStreet: () => {
+        if (showStreet) {
+          const ns = Object.assign({}, sel);
+          LOC_KEYS.forEach((k) => { if (ns[k]) ns[k] = ns[k].filter((v) => v !== 'street'); });
+          const ts = typeSel && allTypes[typeSel] && allTypes[typeSel].placement === 'Уличный' ? '' : typeSel;
+          this.setState({ showStreet: false, sel: ns, typeSel: ts, open: null });
+        } else this.setState({ showStreet: true, open: null });
+      },
+      loading: !data && !error, error: !!error, errorText: error || '',
+      empty: !!data && filtered.length === 0,
+      showTable: !!data && view === 'list' && filtered.length > 0,
+      showCards: !!data && view === 'types' && filtered.length > 0,
+      rows: rows, cards: cards,
+      modal: !!d, d: d || { imgs: [], elFacts: [], specs: [], siblings: [] },
+      closeModal: () => this.setState({ open: null })
+    };
+  }
+}
+
+window.__start(Component);
+</script>
+</body>
+</html>
