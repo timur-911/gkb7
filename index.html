@@ -725,7 +725,9 @@ class Component extends DCLogic {
         ['Крепление', t.mount], ['Способ нанесения', t.print], ['Подсветка', t.placement === 'Световая проекция' ? 'гобо-проекция' : t.light],
         ['Проектор', t.projector], ['Макс. электропотребление', t.power]
       ].filter((r) => r[1]).map((r) => ({ k: r[0], v: r[1] }));
-      const sibs = els.filter((e) => e.type === tk).sort(cmpEl);
+      const anyFilter = !!q || !!typeSel || FACETS.some((f) => (sel[f.key] || []).length > 0);
+      const sibPool = filtered.indexOf(el) === -1 && el ? filtered.concat([el]).sort(cmpEl) : filtered;
+      const sibs = sibPool.filter((e) => e.type === tk).sort(cmpEl);
       const sp = t.specPages || [];
       const spImgs = sp.filter((s) => s.img && !s.href);
       const pgs = (t.pages || []).slice().sort((a, b) => a - b);
@@ -769,7 +771,7 @@ class Component extends DCLogic {
         hasRooms: elRooms.length > 0,
         roomsLabel: 'Кабинеты в выборке: ' + elRooms.length + ', табличек: ' + platesOf(elRooms) + ' (один номер на несколько кабинетов — одна табличка на входе в блок)',
         rooms: elRooms.slice().sort((a, b) => (a.floor - b.floor) || (a.block - b.block) || String(a.plate).localeCompare(String(b.plate), 'ru', { numeric: true })),
-        siblingsLabel: 'Все элементы типа ' + (tk || '—') + ' (' + sibs.reduce((s, e) => s + qtyOf(e), 0) + ' шт.)',
+        siblingsLabel: (anyFilter ? 'Элементы типа ' + (tk || '—') + ' в выборке' : 'Все элементы типа ' + (tk || '—')) + ' (' + sibs.reduce((s, e) => s + qtyOf(e), 0) + ' шт.)',
         siblings: sibs.map((e) => ({ id: e.id, where: floorLabel(e.floor) + (e.block == null ? '' : ', блок ' + e.block), current: el && e === el ? 'true' : 'false', open: openEl(e.id, els.indexOf(e)) }))
       };
     }
