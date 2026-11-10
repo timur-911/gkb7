@@ -35,11 +35,6 @@ a.facttile:hover{background:#D5EDE0}
 .facttile .k{font-size:12px;color:#5C6460}
 .facttile .v{font-size:15px;font-weight:600;overflow-wrap:anywhere}
 a.facttile .v{color:#005C2E}
-button.facttile,a.spectile{font:inherit;text-align:left;width:100%;box-sizing:border-box;text-decoration:none}
-.spectile{border:1.5px solid #007A3D;background:#FFFFFF;color:#007A3D;cursor:pointer}
-.spectile:hover{background:#E6F3EB}
-.spectile .k{color:#3F7D5C}
-.spectile .v{color:#005C2E}
 .kpbox{width:20px;height:20px;accent-color:#007A3D;cursor:pointer}
 .facttile.wide{grid-column:span 2}
 @media (max-width:400px){.facttile.wide{grid-column:auto}}
@@ -269,20 +264,22 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
                 <span style="font-size: 15px; font-weight: 600">{{ef.v}}</span>
               </div>
             </sc-for>
-            <sc-if value="{{d.specTileBtn}}" hint-placeholder-val="{{ false }}">
-              <button type="button" class="facttile spectile" aria-expanded="{{d.specOpen}}" onClick="{{toggleSpec}}"><span class="k">{{d.specTileK}}</span><span class="v">{{d.specTileV}}</span></button>
-            </sc-if>
-            <sc-if value="{{d.specTileLink}}" hint-placeholder-val="{{ false }}">
-              <a class="facttile spectile" href="{{d.specTileHref}}" target="_blank" rel="noopener"><span class="k">{{d.specTileK}}</span><span class="v">{{d.specTileV}}</span></a>
-            </sc-if>
-            <sc-if value="{{d.specTilePlain}}" hint-placeholder-val="{{ false }}">
-              <div class="facttile"><span class="k">{{d.specTileK}}</span><span class="v">{{d.specTileV}}</span></div>
-            </sc-if>
+            <div class="facttile"><span class="k">{{d.specTileK}}</span><span class="v">{{d.specTileV}}</span></div>
             <sc-if value="{{d.hasAiPlain}}" hint-placeholder-val="{{ true }}">
               <div class="facttile wide"><span class="k">Исходный файл</span><span class="v">{{d.aiName}}</span></div>
             </sc-if>
             <sc-if value="{{d.hasAiLink}}" hint-placeholder-val="{{ false }}">
               <a class="facttile wide" href="{{d.aiHref}}" target="_blank" rel="noopener"><span class="k">Исходный файл · открыть на Яндекс Диске</span><span class="v">{{d.aiName}}</span></a>
+            </sc-if>
+            <sc-if value="{{d.hasSpec}}" hint-placeholder-val="{{ false }}">
+              <div style="grid-column: span 2 / -1; display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch">
+                <sc-for list="{{d.specLinks}}" as="sl" hint-placeholder-count="0">
+                  <a class="speclink" href="{{sl.href}}" target="_blank" rel="noopener">Смотреть в спецификации: {{sl.label}}</a>
+                </sc-for>
+                <sc-if value="{{d.hasSpecBtn}}" hint-placeholder-val="{{ false }}">
+                  <button type="button" class="speclink" style="flex: 1 1 auto; justify-content: center" aria-expanded="{{d.specOpen}}" onClick="{{toggleSpec}}">{{d.specBtnLabel}}</button>
+                </sc-if>
+              </div>
             </sc-if>
           </div>
         </sc-if>
@@ -290,7 +287,7 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
         <sc-if value="{{d.hasSpecType}}" hint-placeholder-val="{{ false }}">
           <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-end">
             <sc-for list="{{d.specLinks}}" as="sl" hint-placeholder-count="0">
-              <a class="speclink" href="{{sl.href}}" target="_blank" rel="noopener">Страница спецификации: {{sl.label}}</a>
+              <a class="speclink" href="{{sl.href}}" target="_blank" rel="noopener">Смотреть в спецификации: {{sl.label}}</a>
             </sc-for>
             <sc-if value="{{d.hasSpecBtn}}" hint-placeholder-val="{{ false }}">
               <button type="button" class="speclink" aria-expanded="{{d.specOpen}}" onClick="{{toggleSpec}}">{{d.specBtnLabel}}</button>
@@ -763,13 +760,9 @@ class Component extends DCLogic {
         specLinks: sp.filter((s) => s.href).map((s) => ({ href: s.href, label: s.label })),
         hasSpecBtn: spImgs.length > 0,
         specOpen: this.state.showSpec ? 'true' : 'false',
-        specBtnLabel: this.state.showSpec ? 'Скрыть страницу спецификации' : (pgs.length > 1 ? 'Страницы' : 'Страница') + ' спецификации: ' + (tk || '') + pgLabel,
-        specTileBtn: !!el && spImgs.length > 0,
-        specTileLink: !!el && spImgs.length === 0 && sp.some((s) => s.href),
-        specTilePlain: !!el && sp.length === 0,
-        specTileHref: (sp.find((s) => s.href) || {}).href || '',
-        specTileK: (pgs.length > 1 ? 'Страницы' : 'Страница') + ' спецификации' + (this.state.showSpec && spImgs.length ? ' · скрыть' : ''),
-        specTileV: sp.length === 0 ? 'нет описания в документе' : (tk || '') + pgLabel,
+        specBtnLabel: this.state.showSpec ? 'Скрыть страницу спецификации' : 'Смотреть в спецификации: ' + (tk || ''),
+        specTileK: (pgs.length > 1 ? 'Страницы' : 'Страница') + ' спецификации',
+        specTileV: pgs.length ? pgs.join(', ') : 'нет описания в документе',
         aiName: aiName, hasAiPlain: !!aiName && !aiUrl, hasAiLink: !!aiName && !!aiUrl, aiHref: aiUrl,
         specShown: this.state.showSpec && spImgs.length > 0,
         specImgs: spImgs.map((s) => ({ src: s.img, cap: s.label })),
