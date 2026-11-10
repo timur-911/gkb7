@@ -35,6 +35,11 @@ a.facttile:hover{background:#D5EDE0}
 .facttile .k{font-size:12px;color:#5C6460}
 .facttile .v{font-size:15px;font-weight:600;overflow-wrap:anywhere}
 a.facttile .v{color:#005C2E}
+button.facttile,a.spectile{font:inherit;text-align:left;width:100%;box-sizing:border-box;text-decoration:none}
+.spectile{border:1.5px solid #007A3D;background:#FFFFFF;color:#007A3D;cursor:pointer}
+.spectile:hover{background:#E6F3EB}
+.spectile .k{color:#3F7D5C}
+.spectile .v{color:#005C2E}
 .kpbox{width:20px;height:20px;accent-color:#007A3D;cursor:pointer}
 .facttile.wide{grid-column:span 2}
 @media (max-width:400px){.facttile.wide{grid-column:auto}}
@@ -264,21 +269,20 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
                 <span style="font-size: 15px; font-weight: 600">{{ef.v}}</span>
               </div>
             </sc-for>
+            <sc-if value="{{d.specTileBtn}}" hint-placeholder-val="{{ false }}">
+              <button type="button" class="facttile spectile" aria-expanded="{{d.specOpen}}" onClick="{{toggleSpec}}"><span class="k">{{d.specTileK}}</span><span class="v">{{d.specTileV}}</span></button>
+            </sc-if>
+            <sc-if value="{{d.specTileLink}}" hint-placeholder-val="{{ false }}">
+              <a class="facttile spectile" href="{{d.specTileHref}}" target="_blank" rel="noopener"><span class="k">{{d.specTileK}}</span><span class="v">{{d.specTileV}}</span></a>
+            </sc-if>
+            <sc-if value="{{d.specTilePlain}}" hint-placeholder-val="{{ false }}">
+              <div class="facttile"><span class="k">{{d.specTileK}}</span><span class="v">{{d.specTileV}}</span></div>
+            </sc-if>
             <sc-if value="{{d.hasAiPlain}}" hint-placeholder-val="{{ true }}">
               <div class="facttile wide"><span class="k">Исходный файл</span><span class="v">{{d.aiName}}</span></div>
             </sc-if>
             <sc-if value="{{d.hasAiLink}}" hint-placeholder-val="{{ false }}">
               <a class="facttile wide" href="{{d.aiHref}}" target="_blank" rel="noopener"><span class="k">Исходный файл · открыть на Яндекс Диске</span><span class="v">{{d.aiName}}</span></a>
-            </sc-if>
-            <sc-if value="{{d.hasSpec}}" hint-placeholder-val="{{ false }}">
-              <div style="grid-column: span 2 / -1; display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch">
-                <sc-for list="{{d.specLinks}}" as="sl" hint-placeholder-count="0">
-                  <a class="speclink" href="{{sl.href}}" target="_blank" rel="noopener">Страница спецификации: {{sl.label}}</a>
-                </sc-for>
-                <sc-if value="{{d.hasSpecBtn}}" hint-placeholder-val="{{ false }}">
-                  <button type="button" class="speclink" style="flex: 1 1 auto; justify-content: center" aria-expanded="{{d.specOpen}}" onClick="{{toggleSpec}}">{{d.specBtnLabel}}</button>
-                </sc-if>
-              </div>
             </sc-if>
           </div>
         </sc-if>
@@ -722,8 +726,7 @@ class Component extends DCLogic {
         ['Габариты', t.dims], ['Высота от пола', t.height], ['Лицевая сторона', t.face], ['Задняя сторона', t.back],
         ['Торец', t.edge], ['Каркас', t.frame], ['Основание', t.base], ['Защита', t.protection],
         ['Крепление', t.mount], ['Способ нанесения', t.print], ['Подсветка', t.placement === 'Световая проекция' ? 'гобо-проекция' : t.light],
-        ['Проектор', t.projector], ['Макс. электропотребление', t.power],
-        ['Страница спецификации', t.pages && t.pages.length ? t.pages.join(', ') : 'нет описания в документе']
+        ['Проектор', t.projector], ['Макс. электропотребление', t.power]
       ].filter((r) => r[1]).map((r) => ({ k: r[0], v: r[1] }));
       const sibs = els.filter((e) => e.type === tk).sort(cmpEl);
       const sp = t.specPages || [];
@@ -761,6 +764,12 @@ class Component extends DCLogic {
         hasSpecBtn: spImgs.length > 0,
         specOpen: this.state.showSpec ? 'true' : 'false',
         specBtnLabel: this.state.showSpec ? 'Скрыть страницу спецификации' : (pgs.length > 1 ? 'Страницы' : 'Страница') + ' спецификации: ' + (tk || '') + pgLabel,
+        specTileBtn: !!el && spImgs.length > 0,
+        specTileLink: !!el && spImgs.length === 0 && sp.some((s) => s.href),
+        specTilePlain: !!el && sp.length === 0,
+        specTileHref: (sp.find((s) => s.href) || {}).href || '',
+        specTileK: (pgs.length > 1 ? 'Страницы' : 'Страница') + ' спецификации' + (this.state.showSpec && spImgs.length ? ' · скрыть' : ''),
+        specTileV: sp.length === 0 ? 'нет описания в документе' : (tk || '') + pgLabel,
         aiName: aiName, hasAiPlain: !!aiName && !aiUrl, hasAiLink: !!aiName && !!aiUrl, aiHref: aiUrl,
         specShown: this.state.showSpec && spImgs.length > 0,
         specImgs: spImgs.map((s) => ({ src: s.img, cap: s.label })),
