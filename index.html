@@ -26,6 +26,18 @@ a{color:#007A3D}a:hover{color:#005C2E}
 .idbtn{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13px;font-weight:500;color:#005C2E;background:#E6F3EB;border:0;border-radius:6px;padding:0 8px;min-height:32px;cursor:pointer;white-space:nowrap}
 .idbtn:hover{background:#CFE9D9}
 .row:hover{background:#FAFBFA}
+.speclink{font:inherit;font-size:14px;font-weight:600;line-height:1.2;min-height:44px;padding:0 16px;border-radius:10px;border:1.5px solid #007A3D;background:#FFFFFF;color:#007A3D;cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none;box-sizing:border-box}
+.speclink:hover{background:#E6F3EB;color:#005C2E}
+.speclink{white-space:nowrap}
+.facttile{background:#F4F5F3;border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:4px;min-width:0}
+a.facttile{text-decoration:none;color:inherit;border:1px solid #BFE3CE;background:#E6F3EB}
+a.facttile:hover{background:#D5EDE0}
+.facttile .k{font-size:12px;color:#5C6460}
+.facttile .v{font-size:15px;font-weight:600;overflow-wrap:anywhere}
+a.facttile .v{color:#005C2E}
+.kpbox{width:20px;height:20px;accent-color:#007A3D;cursor:pointer}
+.facttile.wide{grid-column:span 2}
+@media (max-width:400px){.facttile.wide{grid-column:auto}}
 .card{transition:border-color .15s}
 .card:hover{border-color:#007A3D}
 .cardbtn{font:inherit;text-align:left;background:none;border:0;padding:0;cursor:pointer;color:inherit;display:flex;flex-direction:column;gap:12px;width:100%}
@@ -111,6 +123,14 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
         </div>
       </div>
 
+      <sc-if value="{{hasKp}}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background: #E6F3EB; border: 1px solid #BFE3CE; border-radius: 12px; padding: 10px 12px">
+          <button type="button" class="speclink" onClick="{{exportKp}}">{{kpLabel}}</button>
+          <button type="button" class="chip" onClick="{{clearKp}}">Снять выбор</button>
+          <span style="font-size: 13px; color: #3F4743">{{kpStatus}}</span>
+        </div>
+      </sc-if>
+
       <sc-if value="{{loading}}" hint-placeholder-val="{{ false }}">
         <div style="padding: 48px; text-align: center; color: #5C6460; background: #FFFFFF; border: 1px solid #E1E4E1; border-radius: 14px">Загрузка данных спецификации…</div>
       </sc-if>
@@ -123,18 +143,19 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
 
       <sc-if value="{{showTable}}" hint-placeholder-val="{{ true }}">
         <div style="background: #FFFFFF; border: 1px solid #E1E4E1; border-radius: 14px; overflow-x: auto">
-          <table style="width: 100%; min-width: 960px; border-collapse: collapse; font-size: 13px">
+          <table style="width: 100%; min-width: 0; table-layout: fixed; border-collapse: collapse; font-size: 13px">
             <thead>
               <tr style="text-align: left; color: #5C6460; font-size: 12px">
-                <th scope="col" style="padding: 12px 16px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Эскиз</th>
-                <th scope="col" style="padding: 12px 8px; font-weight: 600; border-bottom: 1px solid #E1E4E1">ID</th>
-                <th scope="col" style="padding: 12px 8px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Этаж</th>
-                <th scope="col" style="padding: 12px 8px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Блок</th>
-                <th scope="col" style="padding: 12px 8px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Тип</th>
-                <th scope="col" style="padding: 12px 8px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Класс</th>
-                <th scope="col" style="padding: 12px 8px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Вид элемента</th>
-                <th scope="col" style="padding: 12px 8px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Конструкция</th>
-                <th scope="col" style="padding: 12px 8px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Габариты</th>
+                <th scope="col" style="width: 12.3%; padding: 12px 16px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Эскиз</th>
+                <th scope="col" style="width: 10.6%; padding: 12px 8px; font-weight: 600; border-bottom: 1px solid #E1E4E1">ID</th>
+                <th scope="col" style="width: 5.7%; padding: 12px 6px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Этаж</th>
+                <th scope="col" style="width: 5.5%; padding: 12px 4px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Блок</th>
+                <th scope="col" style="width: 6.9%; padding: 12px 4px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Тип</th>
+                <th scope="col" style="width: 7.4%; padding: 12px 6px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Класс</th>
+                <th scope="col" style="width: 14.3%; padding: 12px 6px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Вид элемента</th>
+                <th scope="col" style="width: 16.2%; padding: 12px 6px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Конструкция</th>
+                <th scope="col" style="width: 12.4%; padding: 12px 6px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Габариты</th>
+                <th scope="col" style="width: 8.7%; padding: 12px 12px 12px 6px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Выбрать для КП</th>
               </tr>
             </thead>
             <tbody>
@@ -154,13 +175,14 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
                     </div>
                   </td>
                   <td style="padding: 8px"><button type="button" class="idbtn" onClick="{{r.open}}" aria-label="Подробнее об элементе {{r.id}}">{{r.id}}</button></td>
-                  <td style="padding: 8px; white-space: nowrap">{{r.floorLabel}}</td>
-                  <td style="padding: 8px; white-space: nowrap">{{r.blockLabel}}</td>
-                  <td style="padding: 8px; white-space: nowrap; font-weight: 600">{{r.type}}</td>
-                  <td style="padding: 8px; white-space: nowrap; color: #3F4743">{{r.cls}}</td>
-                  <td style="padding: 8px; min-width: 140px; font-weight: 500">{{r.title}}</td>
-                  <td style="padding: 8px; min-width: 180px; color: #3F4743">{{r.sub}}</td>
-                  <td style="padding: 8px 16px 8px 8px; white-space: pre; line-height: 1.5; font-variant-numeric: tabular-nums">{{r.dims}}</td>
+                  <td style="padding: 8px 6px; white-space: nowrap">{{r.floorLabel}}</td>
+                  <td style="padding: 8px 4px">{{r.blockLabel}}</td>
+                  <td style="padding: 8px 4px; white-space: nowrap; font-weight: 600">{{r.type}}</td>
+                  <td style="padding: 8px 6px; white-space: nowrap; color: #3F4743">{{r.cls}}</td>
+                  <td style="padding: 8px 6px; font-weight: 500">{{r.title}}</td>
+                  <td style="padding: 8px 6px; color: #3F4743">{{r.sub}}</td>
+                  <td style="padding: 8px 6px; white-space: pre-line; line-height: 1.5; font-variant-numeric: tabular-nums">{{r.dims}}</td>
+                  <td style="padding: 8px 12px 8px 6px; text-align: center"><input type="checkbox" class="kpbox" checked="{{r.checked}}" onChange="{{r.toggleKp}}" aria-label="Выбрать {{r.id}} для КП"/></td>
                 </tr>
               </sc-for>
             </tbody>
@@ -237,6 +259,44 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
                 <span style="font-size: 15px; font-weight: 600">{{ef.v}}</span>
               </div>
             </sc-for>
+            <sc-if value="{{d.hasAiPlain}}" hint-placeholder-val="{{ true }}">
+              <div class="facttile wide"><span class="k">Исходный файл</span><span class="v">{{d.aiName}}</span></div>
+            </sc-if>
+            <sc-if value="{{d.hasAiLink}}" hint-placeholder-val="{{ false }}">
+              <a class="facttile wide" href="{{d.aiHref}}" target="_blank" rel="noopener"><span class="k">Исходный файл · открыть на Яндекс Диске</span><span class="v">{{d.aiName}}</span></a>
+            </sc-if>
+            <sc-if value="{{d.hasSpec}}" hint-placeholder-val="{{ false }}">
+              <div style="grid-column: span 2 / -1; display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch">
+                <sc-for list="{{d.specLinks}}" as="sl" hint-placeholder-count="0">
+                  <a class="speclink" href="{{sl.href}}" target="_blank" rel="noopener">Страница спецификации: {{sl.label}}</a>
+                </sc-for>
+                <sc-if value="{{d.hasSpecBtn}}" hint-placeholder-val="{{ false }}">
+                  <button type="button" class="speclink" style="flex: 1 1 auto; justify-content: center" aria-expanded="{{d.specOpen}}" onClick="{{toggleSpec}}">{{d.specBtnLabel}}</button>
+                </sc-if>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{d.hasSpecType}}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-end">
+            <sc-for list="{{d.specLinks}}" as="sl" hint-placeholder-count="0">
+              <a class="speclink" href="{{sl.href}}" target="_blank" rel="noopener">Страница спецификации: {{sl.label}}</a>
+            </sc-for>
+            <sc-if value="{{d.hasSpecBtn}}" hint-placeholder-val="{{ false }}">
+              <button type="button" class="speclink" aria-expanded="{{d.specOpen}}" onClick="{{toggleSpec}}">{{d.specBtnLabel}}</button>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{d.specShown}}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; gap: 12px">
+            <sc-for list="{{d.specImgs}}" as="si" hint-placeholder-count="1">
+              <figure style="margin: 0; display: flex; flex-direction: column; gap: 6px">
+                <img src="{{si.src}}" alt="Страница спецификации {{si.cap}}" style="width: 100%; height: auto; border: 1px solid #E1E4E1; border-radius: 10px"/>
+                <figcaption style="font-size: 12px; color: #5C6460">Страница спецификации: {{si.cap}}</figcaption>
+              </figure>
+            </sc-for>
           </div>
         </sc-if>
 
@@ -260,8 +320,8 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
                     <th scope="col" style="padding: 8px 12px; font-weight: 600">Номер на табличке</th>
                     <th scope="col" style="padding: 8px; font-weight: 600">Помещение</th>
                     <th scope="col" style="padding: 8px; font-weight: 600">Наименование</th>
-                    <th scope="col" style="padding: 8px; font-weight: 600">Этаж</th>
-                    <th scope="col" style="padding: 8px 12px 8px 8px; font-weight: 600">Блок</th>
+                    <th scope="col" style="width: 5.7%; padding: 8px; font-weight: 600">Этаж</th>
+                    <th scope="col" style="width: 5.5%; padding: 8px 12px 8px 8px; font-weight: 600">Блок</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -297,6 +357,7 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
   </sc-if>
 </div>
 </script>
+<script src="config.js"></script>
 <script src="data.js"></script>
 <script>
 (function(){
@@ -323,6 +384,7 @@ function build(node,sc,out){
   for(i=0;i<node.attributes.length;i++){var a=node.attributes[i],n=a.name,m=WHOLE.exec(a.value),v=m?get(m[1],sc):interp(a.value,sc);
     if(/^on[A-Z]/.test(n)){if(typeof v==='function')el.addEventListener(n.slice(2).toLowerCase(),v);}
     else if(n==='disabled'){if(v&&v!=='false')el.disabled=true;}
+    else if(n==='checked'){if(v&&v!=='false')el.checked=true;}
     else if(n==='value'&&(name==='select'||name==='input')){later=v;}
     else if(v!=null&&v!==false)el.setAttribute(n,v===true?'':String(v));}
   for(c=node.firstChild;c;c=c.nextSibling)build(c,sc,el);
@@ -343,7 +405,7 @@ window.__start=function(C){comp=new C({});render();if(comp.componentDidMount)com
 </script>
 <script>
 
-const DATA_URL = '/_blob/b59873d08356f52a8269005a2358b44d';
+const DATA_URL = '/_blob/802d197f83270d160384b94143ebe5d5';
 const FLOOR_ORDER = ['0','1','2','3','5','6','street','any'];
 const LOC_KEYS = ['floor', 'block'];
 const NA = 'Не указано';
@@ -368,10 +430,78 @@ const platesOf = (rooms) => Object.keys(rooms.reduce((m, r) => { m[r.floor + '|'
 const distinctOf = (list, k) => Object.keys(list.reduce((m, r) => { m[r[k]] = 1; return m; }, {})).sort((a, b) => a - b);
 const cmpEl = (a, b) => (FLOOR_ORDER.indexOf(a.floor) - FLOOR_ORDER.indexOf(b.floor)) || ((a.block || 0) - (b.block || 0)) || (a.n - b.n);
 
+const KP_KEY = 'gkb7-kp-selection';
+const kpLoad = () => { try { return JSON.parse(sessionStorage.getItem(KP_KEY) || '{}') || {}; } catch (e) { return {}; } };
+const kpStore = (kp) => { try { sessionStorage.setItem(KP_KEY, JSON.stringify(kp)); } catch (e) {} };
+const xmlEsc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const colName = (i) => { let s = '', n = i + 1; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; };
+const CRC_T = (() => { const t = []; for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+const crc32 = (b) => { let c = 0xFFFFFFFF; for (let i = 0; i < b.length; i++) c = CRC_T[(c ^ b[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+function zipStore(files) {
+  const enc = new TextEncoder(), parts = [], cd = [];
+  let off = 0, n = 0;
+  files.forEach((f) => {
+    const name = enc.encode(f.name), data = enc.encode(f.text), crc = crc32(data);
+    const lh = new DataView(new ArrayBuffer(30));
+    lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true);
+    lh.setUint16(8, 0, true); lh.setUint16(10, 0, true); lh.setUint16(12, 0x21, true);
+    lh.setUint32(14, crc, true); lh.setUint32(18, data.length, true); lh.setUint32(22, data.length, true);
+    lh.setUint16(26, name.length, true); lh.setUint16(28, 0, true);
+    parts.push(new Uint8Array(lh.buffer), name, data);
+    const ch = new DataView(new ArrayBuffer(46));
+    ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true);
+    ch.setUint16(10, 0, true); ch.setUint16(12, 0, true); ch.setUint16(14, 0x21, true);
+    ch.setUint32(16, crc, true); ch.setUint32(20, data.length, true); ch.setUint32(24, data.length, true);
+    ch.setUint16(28, name.length, true); ch.setUint16(30, 0, true); ch.setUint16(32, 0, true);
+    ch.setUint16(34, 0, true); ch.setUint16(36, 0, true); ch.setUint32(38, 0, true); ch.setUint32(42, off, true);
+    cd.push(new Uint8Array(ch.buffer), name);
+    off += 30 + name.length + data.length; n += 1;
+  });
+  const cdSize = cd.reduce((s, p) => s + p.length, 0);
+  const eo = new DataView(new ArrayBuffer(22));
+  eo.setUint32(0, 0x06054b50, true); eo.setUint16(4, 0, true); eo.setUint16(6, 0, true);
+  eo.setUint16(8, n, true); eo.setUint16(10, n, true); eo.setUint32(12, cdSize, true);
+  eo.setUint32(16, off, true); eo.setUint16(20, 0, true);
+  const all = parts.concat(cd, [new Uint8Array(eo.buffer)]);
+  const total = all.reduce((s, p) => s + p.length, 0), out = new Uint8Array(total);
+  let p = 0; all.forEach((b) => { out.set(b, p); p += b.length; });
+  return out;
+}
+const NS_MAIN = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
+const NS_REL = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+const NS_PKG = 'http://schemas.openxmlformats.org/package/2006/relationships';
+const XML_HEAD = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
+function xlsxBytes(head, rows, widths, linkCol, links) {
+  const cell = (c, r, v) => {
+    if (v === '' || v == null) return '';
+    const ref = colName(c) + r;
+    if (/^\d{1,9}$/.test(String(v))) return '<c r="' + ref + '"><v>' + v + '</v></c>';
+    return '<c r="' + ref + '" t="inlineStr"><is><t xml:space="preserve">' + xmlEsc(v) + '</t></is></c>';
+  };
+  let sheet = XML_HEAD + '<worksheet xmlns="' + NS_MAIN + '" xmlns:r="' + NS_REL + '">';
+  sheet += '<cols>' + widths.map((w, i) => '<col min="' + (i + 1) + '" max="' + (i + 1) + '" width="' + w + '" customWidth="1"/>').join('') + '</cols><sheetData>';
+  sheet += '<row r="1">' + head.map((h, i) => cell(i, 1, h)).join('') + '</row>';
+  rows.forEach((row, ri) => { sheet += '<row r="' + (ri + 2) + '">' + row.map((v, i) => cell(i, ri + 2, v)).join('') + '</row>'; });
+  sheet += '</sheetData>';
+  const hl = [];
+  links.forEach((u, ri) => { if (u) hl.push({ ref: colName(linkCol) + (ri + 2), id: 'rId' + (hl.length + 1), url: u }); });
+  if (hl.length) sheet += '<hyperlinks>' + hl.map((h) => '<hyperlink ref="' + h.ref + '" r:id="' + h.id + '"/>').join('') + '</hyperlinks>';
+  sheet += '</worksheet>';
+  const files = [
+    { name: '[Content_Types].xml', text: XML_HEAD + '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>' },
+    { name: '_rels/.rels', text: XML_HEAD + '<Relationships xmlns="' + NS_PKG + '"><Relationship Id="rId1" Type="' + NS_REL + '/officeDocument" Target="xl/workbook.xml"/></Relationships>' },
+    { name: 'xl/workbook.xml', text: XML_HEAD + '<workbook xmlns="' + NS_MAIN + '" xmlns:r="' + NS_REL + '"><sheets><sheet name="Элементы навигации" sheetId="1" r:id="rId1"/></sheets></workbook>' },
+    { name: 'xl/_rels/workbook.xml.rels', text: XML_HEAD + '<Relationships xmlns="' + NS_PKG + '"><Relationship Id="rId1" Type="' + NS_REL + '/worksheet" Target="worksheets/sheet1.xml"/></Relationships>' },
+    { name: 'xl/worksheets/sheet1.xml', text: sheet }
+  ];
+  if (hl.length) files.push({ name: 'xl/worksheets/_rels/sheet1.xml.rels', text: XML_HEAD + '<Relationships xmlns="' + NS_PKG + '">' + hl.map((h) => '<Relationship Id="' + h.id + '" Type="' + NS_REL + '/hyperlink" Target="' + xmlEsc(h.url) + '" TargetMode="External"/>').join('') + '</Relationships>' });
+  return zipStore(files);
+}
+
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { data: null, error: null, q: '', sel: {}, typeSel: '', view: 'list', open: null, showStreet: false, showGobo: false };
+    this.state = { data: null, error: null, q: '', sel: {}, typeSel: '', view: 'list', open: null, showStreet: false, showGobo: false, showSpec: false, kp: kpLoad(), kpStatus: '' };
   }
   componentDidMount() {
     Promise.resolve({ok:true,json:function(){return Promise.resolve(JSON.parse(JSON.stringify(window.NAV_DATA)));}}).then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
@@ -381,6 +511,90 @@ class Component extends DCLogic {
         this.setState({ data });
       })
       .catch((err) => this.setState({ error: String(err && err.message || err) }));
+  }
+  toggleKp(id) {
+    const kp = Object.assign({}, this.state.kp);
+    if (kp[id]) delete kp[id]; else kp[id] = 1;
+    kpStore(kp);
+    this.setState({ kp: kp, kpStatus: '' });
+  }
+  clearKp() { kpStore({}); this.setState({ kp: {}, kpStatus: '' }); }
+  exportKp() {
+    const data = this.state.data; if (!data) return;
+    const kp = this.state.kp;
+    const picked = data.elements.filter((e) => kp[e.id]).sort(cmpEl);
+    if (!picked.length) return;
+    const head = ['ID', '\u042d\u0442\u0430\u0436', '\u0411\u043b\u043e\u043a', '\u0422\u0438\u043f', '\u041a\u043b\u0430\u0441\u0441', '\u0412\u0438\u0434 \u044d\u043b\u0435\u043c\u0435\u043d\u0442\u0430', '\u041a\u043e\u043d\u0441\u0442\u0440\u0443\u043a\u0446\u0438\u044f', '\u0413\u0430\u0431\u0430\u0440\u0438\u0442\u044b', '\u0421\u0442\u0440\u0430\u043d\u0438\u0446\u0430 \u0441\u043f\u0435\u0446\u0438\u0444\u0438\u043a\u0430\u0446\u0438\u0438', '\u0418\u0441\u0445\u043e\u0434\u043d\u044b\u0439 \u0444\u0430\u0439\u043b'];
+    const rows = picked.map((e) => {
+      const t = data.types[e.type] || EMPTY_TYPE;
+      const pgs = (t.pages || []).slice().sort((a, b) => a - b);
+      const rms = e.rooms ? this.roomsFor(e, null) : null;
+      return [
+        e.id,
+        rms ? distinctOf(rms, 'floor').join(', ') + ' \u044d\u0442\u0430\u0436' : floorLabel(e.floor),
+        rms ? blocksLabel(rms, e.rooms) : (e.block == null ? '\u0423\u043b\u0438\u0446\u0430' : String(e.block)),
+        e.type || '', e.cls || '', t.title || '', t.sub || '',
+        String(t.dims || '').split('\n').join(' + '),
+        pgs.length === 0 ? '' : (pgs.length === 1 ? String(pgs[0]) : pgs[0] + '\u2013' + pgs[pgs.length - 1]),
+        e.srcFile || ''
+      ];
+    });
+    const links = picked.map((e) => e.srcUrl || '');
+    const bytes = xlsxBytes(head, rows, [14, 12, 10, 10, 10, 24, 30, 22, 14, 30], 9, links);
+    const stamp = new Date().toISOString().slice(0, 10);
+    const name = '\u0413\u041a\u04117-\u041a\u041f-' + picked.length + '-' + stamp + '.xlsx';
+    this.saveFile(name, bytes, { file: name, count: picked.length, head: head, rows: rows, links: links });
+  }
+  logExport(rec) {
+    const body = { at: new Date().toISOString(), file: rec.file, count: rec.count, head: rec.head, rows: rec.rows, links: rec.links };
+    try {
+      const sync = (typeof window !== 'undefined' && window.KP_SYNC) || null;
+      if (sync && sync.url) {
+        const payload = Object.assign({ key: sync.key || '' }, body);
+        fetch(sync.url, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) }).catch(() => null);
+      }
+    } catch (e2) {}
+    try {
+      if (!(typeof window !== 'undefined' && window.claude && typeof window.claude.use === 'function')) return;
+      Promise.all([window.claude.use('db'), window.claude.use('user')]).then((got) => {
+        const db = got[0], user = got[1];
+        if (!db) return null;
+        const docId = body.at.replace(/[:.]/g, '-') + '-' + Math.random().toString(36).slice(2, 8);
+        const write = () => db.collection('exports').doc(docId).set(body);
+        if (!user) return write();
+        return Promise.resolve(user.id()).then((uid) => {
+          if (!uid) return null;
+          body.userId = uid;
+          return user.profiles ? user.profiles([uid]).then((ps) => { const p = ps && ps[uid]; if (p && p.name) body.userName = p.name; }) : null;
+        }).catch(() => null).then(write);
+      }).catch(() => null);
+    } catch (e) {}
+  }
+  saveFile(name, bytes, rec) {
+    const blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const done = (msg) => this.setState({ kpStatus: msg });
+    const logged = () => { if (rec) this.logExport(rec); };
+    const useClaude = typeof window !== 'undefined' && window.claude && typeof window.claude.use === 'function';
+    if (useClaude) {
+      done('\u0421\u043e\u0445\u0440\u0430\u043d\u044f\u0435\u043c\u2026');
+      window.claude.use('downloads').then((dl) => {
+        if (!dl) return this.browserSave(name, blob, done, logged);
+        return dl.save({ filename: name, data: blob })
+          .then(() => { logged(); done('\u0424\u0430\u0439\u043b \u0441\u043e\u0445\u0440\u0430\u043d\u0451\u043d: ' + name); })
+          .catch((err) => done(err && err.code === 'declined' ? '\u0421\u043e\u0445\u0440\u0430\u043d\u0435\u043d\u0438\u0435 \u043e\u0442\u043c\u0435\u043d\u0435\u043d\u043e' : '\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0441\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c \u0444\u0430\u0439\u043b'));
+      }).catch(() => this.browserSave(name, blob, done, logged));
+    } else this.browserSave(name, blob, done, logged);
+  }
+  browserSave(name, blob, done, logged) {
+    try {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = name; a.rel = 'noopener';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
+      if (logged) logged();
+      done('\u0424\u0430\u0439\u043b \u0441\u043e\u0445\u0440\u0430\u043d\u0451\u043d: ' + name);
+    } catch (e) { done('\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0441\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c \u0444\u0430\u0439\u043b'); }
   }
   toggle(key, val) {
     const cur = (this.state.sel[key] || []).slice();
@@ -462,7 +676,7 @@ class Component extends DCLogic {
     const typeKeys = Object.keys(types).sort((a, b) => typeNum(a) - typeNum(b));
     const typeOptions = typeKeys.map((k) => ({ value: k, label: k + ' — ' + types[k].title + (types[k].dims ? ', ' + types[k].dims : '') }));
 
-    const openEl = (id, idx) => () => this.setState({ open: { kind: 'el', id: id, idx: idx } });
+    const openEl = (id, idx) => () => this.setState({ open: { kind: 'el', id: id, idx: idx }, showSpec: false });
     const rows = filtered.map((e) => {
       const t = this.typeOf(e);
       return {
@@ -471,6 +685,7 @@ class Component extends DCLogic {
         floorLabel: e.rooms ? distinctOf(this.roomsFor(e, null), 'floor').join(', ') + ' этаж' : floorLabel(e.floor),
         blockLabel: e.rooms ? blocksLabel(this.roomsFor(e, null), e.rooms) : (e.block == null ? '—' : e.block),
         img: e.design || (t.img && t.img[0] ? t.img[0] : ''), noImg: !(e.design || (t.img && t.img[0])),
+        checked: !!this.state.kp[e.id], toggleKp: () => this.toggleKp(e.id),
         open: openEl(e.id, els.indexOf(e))
       };
     });
@@ -485,7 +700,7 @@ class Component extends DCLogic {
         img: t.img && t.img[0] ? t.img[0] : '', noImg: !(t.img && t.img[0]),
         countLabel: list.reduce((s, e) => s + this.qtyIn(e, null), 0) + ' шт. в выборке',
         ids: list.map((e) => ({ id: e.id, open: openEl(e.id, els.indexOf(e)) })),
-        open: () => this.setState({ open: { kind: 'type', id: k } })
+        open: () => this.setState({ open: { kind: 'type', id: k }, showSpec: false })
       };
     });
 
@@ -503,6 +718,12 @@ class Component extends DCLogic {
         ['Страница спецификации', t.pages && t.pages.length ? t.pages.join(', ') : 'нет описания в документе']
       ].filter((r) => r[1]).map((r) => ({ k: r[0], v: r[1] }));
       const sibs = els.filter((e) => e.type === tk).sort(cmpEl);
+      const sp = t.specPages || [];
+      const spImgs = sp.filter((s) => s.img && !s.href);
+      const pgs = (t.pages || []).slice().sort((a, b) => a - b);
+      const pgLabel = pgs.length === 0 ? '' : (pgs.length === 1 ? ', стр. ' + pgs[0] : ', стр. ' + pgs[0] + '–' + pgs[pgs.length - 1]);
+      const aiName = el && el.srcFile ? el.srcFile : '';
+      const aiUrl = el && el.srcUrl ? el.srcUrl : '';
       const elRooms = el && el.rooms ? this.roomsFor(el, null) : [];
       const elFacts = el && el.rooms ? [
         { k: 'Этажи', v: distinctOf(elRooms, 'floor').join(', ') || '—' },
@@ -519,7 +740,6 @@ class Component extends DCLogic {
         { k: 'Блок', v: el.block == null ? 'Улица' : String(el.block) },
         { k: 'Порядковый номер', v: String(el.n) + (/f$/.test(el.id) ? ' (флажок)' : '') },
         { k: 'Количество', v: qtyOf(el) + ' шт.' },
-        { k: 'Исходный файл', v: el.file },
         { k: 'Реестр', v: 'стр. ' + el.regPage + (el.dupNote ? ' · ID встречается в реестре дважды' : '') }
       ] : [];
       d = {
@@ -529,6 +749,14 @@ class Component extends DCLogic {
         imgs: el && el.design ? [{ src: el.design, cap: '' }] : (t.img || []).map((src) => ({ src: src, cap: 'Дизайн не найден — чертёж типа ' + (tk || '') + ' из спецификации' })),
         elFacts: elFacts, specs: specRows,
         listUrl: t.listUrl || '', hasList: !!t.listUrl,
+        hasSpec: !!el && sp.length > 0, hasSpecType: !el && sp.length > 0,
+        specLinks: sp.filter((s) => s.href).map((s) => ({ href: s.href, label: s.label })),
+        hasSpecBtn: spImgs.length > 0,
+        specOpen: this.state.showSpec ? 'true' : 'false',
+        specBtnLabel: this.state.showSpec ? 'Скрыть страницу спецификации' : (pgs.length > 1 ? 'Страницы' : 'Страница') + ' спецификации: ' + (tk || '') + pgLabel,
+        aiName: aiName, hasAiPlain: !!aiName && !aiUrl, hasAiLink: !!aiName && !!aiUrl, aiHref: aiUrl,
+        specShown: this.state.showSpec && spImgs.length > 0,
+        specImgs: spImgs.map((s) => ({ src: s.img, cap: s.label })),
         hasRooms: elRooms.length > 0,
         roomsLabel: 'Кабинеты в выборке: ' + elRooms.length + ', табличек: ' + platesOf(elRooms) + ' (один номер на несколько кабинетов — одна табличка на входе в блок)',
         rooms: elRooms.slice().sort((a, b) => (a.floor - b.floor) || (a.block - b.block) || String(a.plate).localeCompare(String(b.plate), 'ru', { numeric: true })),
@@ -570,7 +798,11 @@ class Component extends DCLogic {
       showTable: !!data && view === 'list' && filtered.length > 0,
       showCards: !!data && view === 'types' && filtered.length > 0,
       rows: rows, cards: cards,
+      hasKp: Object.keys(this.state.kp).length > 0, kpLabel: '\u0412\u044b\u0433\u0440\u0443\u0437\u0438\u0442\u044c \u0441\u043f\u0438\u0441\u043e\u043a (' + Object.keys(this.state.kp).length + ')',
+      kpStatus: this.state.kpStatus,
+      exportKp: () => this.exportKp(), clearKp: () => this.clearKp(),
       modal: !!d, d: d || { imgs: [], elFacts: [], specs: [], siblings: [] },
+      toggleSpec: () => this.setState({ showSpec: !this.state.showSpec }),
       closeModal: () => this.setState({ open: null })
     };
   }
