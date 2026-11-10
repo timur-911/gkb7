@@ -59,7 +59,7 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
       <div style="display: flex; flex-direction: column; gap: 6px">
         <h1 style="margin: 0; font-size: 30px; line-height: 1.15; font-weight: 700">Каталог элементов навигации</h1>
         <p style="margin: 0; font-size: 14px; color: var(--muted); max-width: 640px">Фильтруйте указатели по этажам, блокам и техническим характеристикам. Этаж и блок берутся из ID: q1<b>10</b>-<b>1</b>-81 — блок 10, этаж 1, элемент №81. Этаж 111 означает «все этажи».</p>
-        <div style="font-size: 13px; color: var(--muted); margin-top: 10px">Автор: <a href="https://wa.me/77012142992" target="_blank" rel="noopener" style="color: var(--accent); font-weight: 600; text-decoration: none">Тимур Ходжаев</a></div>
+        <div style="font-size: 13px; color: var(--muted); margin-top: 10px">Автор: <a href="https://wa.me/77012142992" target="_blank" rel="noopener" style="color: var(--accent); font-weight: 600; text-decoration-line: none">Тимур Ходжаев</a></div>
       </div>
       <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px">
       <button type="button" class="sw" role="switch" aria-checked="{{darkOn}}" onClick="{{toggleTheme}}">Тёмная тема<span class="track" aria-hidden="true"><span class="knob"></span></span></button>
@@ -246,7 +246,10 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
             <h2 style="margin: 0; font-size: 24px; font-weight: 700; font-family: 'IBM Plex Mono', ui-monospace, monospace">{{d.heading}}</h2>
             <div style="font-size: 14px; color: var(--text2)">{{d.title}} · {{d.sub}}</div>
           </div>
-          <button type="button" class="chip" onClick="{{closeModal}}" aria-label="Закрыть">Закрыть</button>
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end">
+            <button type="button" class="chip" onClick="{{shareCard}}">{{shareLabel}}</button>
+            <button type="button" class="chip" onClick="{{closeModal}}" aria-label="Закрыть">Закрыть</button>
+          </div>
         </div>
 
         <sc-if value="{{d.hasImg}}" hint-placeholder-val="{{ true }}">
@@ -443,6 +446,8 @@ const platesOf = (rooms) => Object.keys(rooms.reduce((m, r) => { m[r.floor + '|'
 const distinctOf = (list, k) => Object.keys(list.reduce((m, r) => { m[r[k]] = 1; return m; }, {})).sort((a, b) => a - b);
 const cmpEl = (a, b) => (FLOOR_ORDER.indexOf(a.floor) - FLOOR_ORDER.indexOf(b.floor)) || ((a.block || 0) - (b.block || 0)) || (a.n - b.n);
 
+const hashSet = (h) => { try { history.replaceState(null, '', location.pathname + location.search + (h ? '#' + encodeURIComponent(h) : '')); } catch (e) {} };
+const cardUrl = (h) => { try { return location.origin + location.pathname + location.search + '#' + encodeURIComponent(h); } catch (e) { return '#' + h; } };
 const THEME_KEY = 'gkb7-theme';
 const themeLoad = () => {
   try { const v = localStorage.getItem(THEME_KEY); if (v === 'dark' || v === 'light') return v; } catch (e) {}
@@ -521,17 +526,45 @@ function xlsxBytes(head, rows, widths, linkCol, links) {
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { data: null, error: null, q: '', sel: {}, typeSel: '', view: 'list', open: null, showStreet: false, showGobo: false, showSpec: false, kp: kpLoad(), kpStatus: '', theme: themeLoad() };
+    this.state = { data: null, error: null, q: '', sel: {}, typeSel: '', view: 'list', open: null, showStreet: false, showGobo: false, showSpec: false, kp: kpLoad(), kpStatus: '', theme: themeLoad(), shareMsg: '' };
   }
   componentDidMount() {
     themeApply(this.state.theme);
+    try { window.addEventListener('hashchange', () => this.openFromHash(null)); } catch (e) {}
     Promise.resolve({ok:true,json:function(){return Promise.resolve(JSON.parse(JSON.stringify(window.NAV_DATA)));}}).then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then((data) => {
         data.elements.forEach((e) => { if (/^q\d+-111-/.test(e.id)) { e.any = true; e.floor = 'any'; e.block = null; } if (e.rooms) e.qty = platesOf(e.rooms); });
         Object.keys(data.types).forEach((k) => { const t = data.types[k]; if (t.dims) t.dims = t.dims.split(' + ').join('\n'); });
         this.setState({ data });
+        this.openFromHash(data);
       })
       .catch((err) => this.setState({ error: String(err && err.message || err) }));
+  }
+  openFromHash(data) {
+    let h = '';
+    try { h = decodeURIComponent((location.hash || '').replace(/^#/, '')); } catch (e) {}
+    const d = data || this.state.data;
+    if (!h || !d) return;
+    const el = d.elements.filter((e) => e.id === h)[0];
+    if (el) {
+      const st = { open: { kind: 'el', id: el.id }, showSpec: false, shareMsg: '' };
+      if (el.floor === 'street') st.showStreet = true;
+      if (el.cls === 'gobo-1') st.showGobo = true;
+      this.setState(st);
+    } else if (d.types[h]) this.setState({ open: { kind: 'type', id: h }, showSpec: false, shareMsg: '' });
+  }
+  shareCard() {
+    const o = this.state.open;
+    if (!o) return;
+    const url = cardUrl(o.id);
+    const title = (o.kind === 'el' ? 'Элемент навигации ' : 'Тип элемента ') + o.id + ' — каталог ГКБ №7';
+    try { if (navigator.share) { navigator.share({ title: title, text: title, url: url }).catch(() => null); return; } } catch (e) {}
+    try {
+      navigator.clipboard.writeText(url).then(
+        () => this.setState({ shareMsg: 'Ссылка скопирована' }),
+        () => this.setState({ shareMsg: 'Скопируйте: ' + url })
+      );
+    } catch (e) { this.setState({ shareMsg: 'Скопируйте: ' + url }); }
   }
   toggleTheme() {
     const t = this.state.theme === 'dark' ? 'light' : 'dark';
@@ -703,7 +736,7 @@ class Component extends DCLogic {
     const typeKeys = Object.keys(types).sort((a, b) => typeNum(a) - typeNum(b));
     const typeOptions = typeKeys.map((k) => ({ value: k, label: k + ' — ' + types[k].title + (types[k].dims ? ', ' + types[k].dims : '') }));
 
-    const openEl = (id, idx) => () => this.setState({ open: { kind: 'el', id: id, idx: idx }, showSpec: false });
+    const openEl = (id) => () => { hashSet(id); this.setState({ open: { kind: 'el', id: id }, showSpec: false, shareMsg: '' }); };
     const rows = filtered.map((e) => {
       const t = this.typeOf(e);
       return {
@@ -713,7 +746,7 @@ class Component extends DCLogic {
         blockLabel: e.rooms ? blocksLabel(this.roomsFor(e, null), e.rooms) : (e.block == null ? '—' : e.block),
         img: e.design || (t.img && t.img[0] ? t.img[0] : ''), noImg: !(e.design || (t.img && t.img[0])),
         checked: !!this.state.kp[e.id], toggleKp: () => this.toggleKp(e.id),
-        open: openEl(e.id, els.indexOf(e))
+        open: openEl(e.id)
       };
     });
 
@@ -726,14 +759,14 @@ class Component extends DCLogic {
         type: k, cls: t.cls || '—', title: t.title, sub: t.sub || '—', dims: t.dims || 'Габариты не указаны',
         img: t.img && t.img[0] ? t.img[0] : '', noImg: !(t.img && t.img[0]),
         countLabel: list.reduce((s, e) => s + this.qtyIn(e, null), 0) + ' шт. в выборке',
-        ids: list.map((e) => ({ id: e.id, open: openEl(e.id, els.indexOf(e)) })),
-        open: () => this.setState({ open: { kind: 'type', id: k }, showSpec: false })
+        ids: list.map((e) => ({ id: e.id, open: openEl(e.id) })),
+        open: () => { hashSet(k); this.setState({ open: { kind: 'type', id: k }, showSpec: false, shareMsg: '' }); }
       };
     });
 
     let d = null;
     if (open && data) {
-      const el = open.kind === 'el' ? els[open.idx] : null;
+      const el = open.kind === 'el' ? (els.filter((e) => e.id === open.id)[0] || null) : null;
       const tk = el ? el.type : open.id;
       const t = types[tk] || EMPTY_TYPE;
       const specRows = [
@@ -790,7 +823,7 @@ class Component extends DCLogic {
         roomsLabel: 'Кабинеты в выборке: ' + elRooms.length + ', табличек: ' + platesOf(elRooms) + ' (один номер на несколько кабинетов — одна табличка на входе в блок)',
         rooms: elRooms.slice().sort((a, b) => (a.floor - b.floor) || (a.block - b.block) || String(a.plate).localeCompare(String(b.plate), 'ru', { numeric: true })),
         siblingsLabel: (anyFilter ? 'Элементы типа ' + (tk || '—') + ' в выборке' : 'Все элементы типа ' + (tk || '—')) + ' (' + sibs.reduce((s, e) => s + qtyOf(e), 0) + ' шт.)',
-        siblings: sibs.map((e) => ({ id: e.id, where: floorLabel(e.floor) + (e.block == null ? '' : ', блок ' + e.block), current: el && e === el ? 'true' : 'false', open: openEl(e.id, els.indexOf(e)) }))
+        siblings: sibs.map((e) => ({ id: e.id, where: floorLabel(e.floor) + (e.block == null ? '' : ', блок ' + e.block), current: el && e === el ? 'true' : 'false', open: openEl(e.id) }))
       };
     }
 
@@ -838,7 +871,9 @@ class Component extends DCLogic {
       exportKp: () => this.exportKp(), clearKp: () => this.clearKp(),
       modal: !!d, d: d || { imgs: [], elFacts: [], specs: [], siblings: [] },
       toggleSpec: () => this.setState({ showSpec: !this.state.showSpec }),
-      closeModal: () => this.setState({ open: null })
+      shareCard: () => this.shareCard(),
+      shareLabel: this.state.shareMsg || 'Поделиться',
+      closeModal: () => { hashSet(''); this.setState({ open: null, shareMsg: '' }); }
     };
   }
 }
