@@ -45,6 +45,18 @@ a.facttile .v{color:var(--accent2)}
 .card:hover{border-color:var(--accent)}
 .cardbtn{font:inherit;text-align:left;background:none;border:0;padding:0;cursor:pointer;color:inherit;display:flex;flex-direction:column;gap:12px;width:100%}
 input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media print{
+:root,:root[data-theme="dark"]{color-scheme:light;--bg:#FFFFFF;--surface:#FFFFFF;--surface2:#F4F5F3;--text:#1B1F1D;--text2:#3F4743;--muted:#5C6460;--border:#E1E4E1;--border2:#D5D9D5;--border3:#E4E7E4;--border4:#E7EAE7;--line:#EEF0EE;--accent:#007A3D;--accent2:#005C2E;--accent-soft:#E6F3EB;--accent-soft2:#D5EDE0;--accent-border:#BFE3CE;--chip-n:#D9F0E3;--on-accent:#FFFFFF;--row-hover:#FFFFFF;--disabled:#8A918D;--track:#C9CEC9;--knob:#FFFFFF;--danger-bg:#FFF4F2;--danger-border:#F2C9C2;--danger-text:#8A1F11}
+@page{margin:12mm}
+body{background:#FFFFFF}
+.noprint{display:none!important}
+body:has(.overlay) .page{display:none!important}
+.overlay{position:static!important;background:none!important;padding:0!important;overflow:visible!important;display:block!important}
+.sheet{box-shadow:none!important;max-width:none!important;border-radius:0!important;padding:0!important;gap:16px!important}
+.sheet button.speclink{display:none!important}
+.sheet img,.sheet figure,.sheet .facttile{break-inside:avoid}
+.sheet table{max-height:none!important}
+}
 </style>
 </head>
 <body>
@@ -52,7 +64,7 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
 <noscript>Для работы каталога нужен JavaScript.</noscript>
 <script type="text/plain" id="tpl">
 <div style="font-family: Inter, system-ui, sans-serif; color: var(--text); background: var(--bg); min-height: 100vh">
-  <header style="background: var(--surface); border-bottom: 1px solid var(--border)">
+  <header class="page" style="background: var(--surface); border-bottom: 1px solid var(--border)">
     <div style="max-width: 1440px; margin: 0 auto; padding: 24px 32px; box-sizing: border-box">
     <div style="font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px">ГКБ №7 · Система навигации</div>
     <div style="display: flex; flex-wrap: wrap; gap: 16px 32px; align-items: flex-end; justify-content: space-between">
@@ -78,7 +90,7 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
     </div>
   </header>
 
-  <div style="max-width: 1440px; margin: 0 auto; padding: 24px 32px 64px; display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; box-sizing: border-box">
+  <div class="page" style="max-width: 1440px; margin: 0 auto; padding: 24px 32px 64px; display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; box-sizing: border-box">
 
     <aside aria-label="Фильтры" style="flex: 1 1 300px; max-width: 360px; min-width: 0; display: flex; flex-direction: column; gap: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; box-sizing: border-box">
       <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
@@ -238,16 +250,17 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
   </div>
 
   <sc-if value="{{modal}}" hint-placeholder-val="{{ false }}">
-    <div style="position: fixed; inset: 0; background: rgba(20,24,22,.45); display: flex; align-items: flex-start; justify-content: center; padding: 32px 16px; overflow-y: auto; z-index: 10; box-sizing: border-box">
-      <div role="dialog" aria-modal="true" aria-label="{{d.heading}}" style="background: var(--surface); border-radius: 16px; width: 100%; max-width: 880px; padding: 24px; display: flex; flex-direction: column; gap: 20px; box-sizing: border-box; box-shadow: 0 20px 60px rgba(0,0,0,.25)">
+    <div class="overlay" style="position: fixed; inset: 0; background: rgba(20,24,22,.45); display: flex; align-items: flex-start; justify-content: center; padding: 32px 16px; overflow-y: auto; z-index: 10; box-sizing: border-box">
+      <div class="sheet" role="dialog" aria-modal="true" aria-label="{{d.heading}}" style="background: var(--surface); border-radius: 16px; width: 100%; max-width: 880px; padding: 24px; display: flex; flex-direction: column; gap: 20px; box-sizing: border-box; box-shadow: 0 20px 60px rgba(0,0,0,.25)">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px">
           <div style="display: flex; flex-direction: column; gap: 4px">
             <div style="font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--accent)">{{d.kicker}}</div>
             <h2 style="margin: 0; font-size: 24px; font-weight: 700; font-family: 'IBM Plex Mono', ui-monospace, monospace">{{d.heading}}</h2>
             <div style="font-size: 14px; color: var(--text2)">{{d.title}} · {{d.sub}}</div>
           </div>
-          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end">
+          <div class="noprint" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end">
             <button type="button" class="chip" onClick="{{shareCard}}">{{shareLabel}}</button>
+            <button type="button" class="chip" onClick="{{printCard}}">Сохранить PDF</button>
             <button type="button" class="chip" onClick="{{closeModal}}" aria-label="Закрыть">Закрыть</button>
           </div>
         </div>
@@ -552,6 +565,16 @@ class Component extends DCLogic {
       if (el.cls === 'gobo-1') st.showGobo = true;
       this.setState(st);
     } else if (d.types[h]) this.setState({ open: { kind: 'type', id: h }, showSpec: false, shareMsg: '' });
+  }
+  printCard() {
+    const o = this.state.open;
+    if (!o) return;
+    let old = '';
+    const restore = () => { try { if (old) document.title = old; } catch (e) {} };
+    try { old = document.title; document.title = 'ГКБ7 — ' + o.id; } catch (e) {}
+    try { window.addEventListener('afterprint', restore, { once: true }); } catch (e) {}
+    try { window.print(); } catch (e) { restore(); }
+    setTimeout(restore, 4000);
   }
   shareCard() {
     const o = this.state.open;
@@ -872,6 +895,7 @@ class Component extends DCLogic {
       modal: !!d, d: d || { imgs: [], elFacts: [], specs: [], siblings: [] },
       toggleSpec: () => this.setState({ showSpec: !this.state.showSpec }),
       shareCard: () => this.shareCard(),
+      printCard: () => this.printCard(),
       shareLabel: this.state.shareMsg || 'Поделиться',
       closeModal: () => { hashSet(''); this.setState({ open: null, shareMsg: '' }); }
     };
