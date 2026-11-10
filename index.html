@@ -38,6 +38,8 @@ a.facttile:hover{background:var(--accent-soft2)}
 .facttile .k{font-size:12px;color:var(--muted)}
 .facttile .v{font-size:15px;font-weight:600;overflow-wrap:anywhere}
 a.facttile .v{color:var(--accent2)}
+.thumbbtn{font:inherit;border:1px solid transparent;padding:0;cursor:pointer;box-sizing:border-box}
+.thumbbtn:hover{border-color:var(--accent)}
 .selall{font:inherit;font-size:12px;font-weight:600;color:var(--accent);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline dashed;text-underline-offset:3px}
 .selall:hover{color:var(--accent2)}
 .kpbox{width:20px;height:20px;accent-color:var(--accent);cursor:pointer}
@@ -185,7 +187,7 @@ body:has(.overlay) .page{display:none!important}
               <sc-for list="{{rows}}" as="r" hint-placeholder-count="8">
                 <tr class="row" style="border-bottom: 1px solid var(--line); vertical-align: middle">
                   <td style="padding: 8px 16px">
-                    <div style="position: relative; width: 104px; height: 56px; background: var(--surface2); border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden">
+                    <button type="button" class="thumbbtn" onClick="{{r.open}}" aria-label="Подробнее об элементе {{r.id}}" style="position: relative; width: 104px; height: 56px; background: var(--surface2); border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden">
                       <sc-if value="{{r.hasQty}}" hint-placeholder-val="{{ false }}">
                         <span style="position: absolute; right: 3px; bottom: 3px; font-size: 10px; line-height: 1; font-weight: 600; padding: 2px 4px; border-radius: 4px; background: rgba(27,31,29,.78); color: #FFFFFF; font-variant-numeric: tabular-nums">{{r.qtyLabel}}</span>
                       </sc-if>
@@ -195,7 +197,7 @@ body:has(.overlay) .page{display:none!important}
                       <sc-if value="{{r.noImg}}" hint-placeholder-val="{{ false }}">
                         <span style="font-size: 11px; color: var(--muted)">нет эскиза</span>
                       </sc-if>
-                    </div>
+                    </button>
                   </td>
                   <td style="padding: 8px"><button type="button" class="idbtn" onClick="{{r.open}}" aria-label="Подробнее об элементе {{r.id}}">{{r.id}}</button></td>
                   <td style="padding: 8px 6px; white-space: nowrap">{{r.floorLabel}}</td>
