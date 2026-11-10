@@ -70,15 +70,16 @@ body:has(.overlay) .page{display:none!important}
 <div style="font-family: Inter, system-ui, sans-serif; color: var(--text); background: var(--bg); min-height: 100vh">
   <header class="page" style="background: var(--surface); border-bottom: 1px solid var(--border)">
     <div style="max-width: 1440px; margin: 0 auto; padding: 24px 32px; box-sizing: border-box">
-    <div style="font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px">ГКБ №7 · Система навигации</div>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: flex-start; justify-content: space-between; margin-bottom: 6px">
+      <div style="font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--accent)">ГКБ №7 · Система навигации</div>
+      <button type="button" class="sw" role="switch" aria-checked="{{darkOn}}" onClick="{{toggleTheme}}" style="min-height: 0">Тёмная тема<span class="track" aria-hidden="true"><span class="knob"></span></span></button>
+    </div>
     <div style="display: flex; flex-wrap: wrap; gap: 16px 32px; align-items: flex-end; justify-content: space-between">
       <div style="display: flex; flex-direction: column; gap: 6px">
         <h1 style="margin: 0; font-size: 30px; line-height: 1.15; font-weight: 700">Каталог элементов навигации</h1>
         <p style="margin: 0; font-size: 14px; color: var(--muted); max-width: 640px">Фильтруйте указатели по этажам, блокам и техническим характеристикам. Этаж и блок берутся из ID: q1<b>10</b>-<b>1</b>-81 — блок 10, этаж 1, элемент №81. Этаж 111 означает «все этажи».</p>
         <div style="font-size: 13px; color: var(--muted); margin-top: 10px">Автор: <a href="https://wa.me/77012142992" target="_blank" rel="noopener" style="color: var(--accent); font-weight: 600; text-decoration-line: none">Тимур Ходжаев</a></div>
       </div>
-      <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px">
-      <button type="button" class="sw" role="switch" aria-checked="{{darkOn}}" onClick="{{toggleTheme}}">Тёмная тема<span class="track" aria-hidden="true"><span class="knob"></span></span></button>
       <div style="display: flex; gap: 24px; flex-wrap: wrap">
         <div style="display: flex; flex-direction: column; gap: 2px">
           <div style="font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums">{{stats.shown}}</div>
@@ -88,7 +89,6 @@ body:has(.overlay) .page{display:none!important}
           <div style="font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums">{{stats.types}}</div>
           <div style="font-size: 12px; color: var(--muted)">{{stats.typesLabel}}</div>
         </div>
-      </div>
       </div>
     </div>
     </div>
