@@ -8,65 +8,71 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap" rel="stylesheet">
 <style>
-body{margin:0;background:#F4F5F3}
-a{color:#007A3D}a:hover{color:#005C2E}
-.chip{font:inherit;font-size:13px;line-height:1.2;min-height:44px;padding:0 12px;border-radius:10px;border:1px solid #D5D9D5;background:#FFFFFF;color:#1B1F1D;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
-.chip:hover{border-color:#007A3D}
-.chip[aria-pressed="true"]{background:#007A3D;border-color:#007A3D;color:#FFFFFF}
-.chip[aria-pressed="true"] .n{color:#D9F0E3}
-.chip:disabled{color:#8A918D;background:#F4F5F3;cursor:default;border-color:#E4E7E4}
-.chip .n{font-size:12px;color:#5C6460;font-variant-numeric:tabular-nums}
-.seg{font:inherit;font-size:14px;font-weight:500;min-height:44px;padding:0 16px;border:0;border-radius:8px;background:transparent;color:#3F4743;cursor:pointer}
-.seg[aria-pressed="true"]{background:#FFFFFF;color:#1B1F1D;box-shadow:0 1px 2px rgba(0,0,0,.12)}
-.sw{font:inherit;font-size:14px;font-weight:500;color:#1B1F1D;background:none;border:0;padding:0 4px;min-height:44px;display:inline-flex;align-items:center;gap:10px;cursor:pointer}
-.sw .track{position:relative;width:51px;height:31px;border-radius:16px;background:#C9CEC9;transition:background .2s;flex:none}
-.sw .knob{position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#FFFFFF;box-shadow:0 2px 4px rgba(0,0,0,.25);transition:transform .2s}
-.sw[aria-checked="true"] .track{background:#007A3D}
+:root{color-scheme:light;--bg:#F4F5F3;--surface:#FFFFFF;--surface2:#F4F5F3;--text:#1B1F1D;--text2:#3F4743;--muted:#5C6460;--border:#E1E4E1;--border2:#D5D9D5;--border3:#E4E7E4;--border4:#E7EAE7;--line:#EEF0EE;--accent:#007A3D;--accent2:#005C2E;--accent-soft:#E6F3EB;--accent-soft2:#D5EDE0;--accent-border:#BFE3CE;--chip-n:#D9F0E3;--on-accent:#FFFFFF;--row-hover:#FAFBFA;--disabled:#8A918D;--track:#C9CEC9;--knob:#FFFFFF;--danger-bg:#FFF4F2;--danger-border:#F2C9C2;--danger-text:#8A1F11;}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#121412;--surface:#1C201E;--surface2:#272C29;--text:#E9ECE9;--text2:#C3CAC5;--muted:#99A29C;--border:#333936;--border2:#3C4440;--border3:#2B302D;--border4:#2B302D;--line:#2A2F2C;--accent:#2FBE78;--accent2:#8BE4B8;--accent-soft:#1C3327;--accent-soft2:#244130;--accent-border:#2F5A43;--chip-n:#0E2419;--on-accent:#0B1A12;--row-hover:#222724;--disabled:#767E79;--track:#434A46;--knob:#E8EBE8;--danger-bg:#2E1C19;--danger-border:#5E3A33;--danger-text:#FF9D8D;}
+img{color-scheme:light}
+body{margin:0;background:var(--bg)}
+a{color:var(--accent)}a:hover{color:var(--accent2)}
+.chip{font:inherit;font-size:13px;line-height:1.2;min-height:44px;padding:0 12px;border-radius:10px;border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.chip:hover{border-color:var(--accent)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.chip[aria-pressed="true"] .n{color:var(--chip-n)}
+.chip:disabled{color:var(--disabled);background:var(--surface2);cursor:default;border-color:var(--border3)}
+.chip .n{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.seg{font:inherit;font-size:14px;font-weight:500;min-height:44px;padding:0 16px;border:0;border-radius:8px;background:transparent;color:var(--text2);cursor:pointer}
+.seg[aria-pressed="true"]{background:var(--surface);color:var(--text);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.sw{font:inherit;font-size:14px;font-weight:500;color:var(--text);background:none;border:0;padding:0 4px;min-height:44px;display:inline-flex;align-items:center;gap:10px;cursor:pointer}
+.sw .track{position:relative;width:51px;height:31px;border-radius:16px;background:var(--track);transition:background .2s;flex:none}
+.sw .knob{position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:var(--knob);box-shadow:0 2px 4px rgba(0,0,0,.25);transition:transform .2s}
+.sw[aria-checked="true"] .track{background:var(--accent)}
 .sw[aria-checked="true"] .knob{transform:translateX(20px)}
-.idbtn{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13px;font-weight:500;color:#005C2E;background:#E6F3EB;border:0;border-radius:6px;padding:0 8px;min-height:32px;cursor:pointer;white-space:nowrap}
-.idbtn:hover{background:#CFE9D9}
-.row:hover{background:#FAFBFA}
-.speclink{font:inherit;font-size:14px;font-weight:600;line-height:1.2;min-height:44px;padding:0 16px;border-radius:10px;border:1.5px solid #007A3D;background:#FFFFFF;color:#007A3D;cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none;box-sizing:border-box}
-.speclink:hover{background:#E6F3EB;color:#005C2E}
+.idbtn{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13px;font-weight:500;color:var(--accent2);background:var(--accent-soft);border:0;border-radius:6px;padding:0 8px;min-height:32px;cursor:pointer;white-space:nowrap}
+.idbtn:hover{background:var(--accent-soft2)}
+.row:hover{background:var(--row-hover)}
+.speclink{font:inherit;font-size:14px;font-weight:600;line-height:1.2;min-height:44px;padding:0 16px;border-radius:10px;border:1.5px solid var(--accent);background:var(--surface);color:var(--accent);cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none;box-sizing:border-box}
+.speclink:hover{background:var(--accent-soft);color:var(--accent2)}
 .speclink{white-space:nowrap}
-.facttile{background:#F4F5F3;border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:4px;min-width:0}
-a.facttile{text-decoration:none;color:inherit;border:1px solid #BFE3CE;background:#E6F3EB}
-a.facttile:hover{background:#D5EDE0}
-.facttile .k{font-size:12px;color:#5C6460}
+.facttile{background:var(--surface2);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:4px;min-width:0}
+a.facttile{text-decoration:none;color:inherit;border:1px solid var(--accent-border);background:var(--accent-soft)}
+a.facttile:hover{background:var(--accent-soft2)}
+.facttile .k{font-size:12px;color:var(--muted)}
 .facttile .v{font-size:15px;font-weight:600;overflow-wrap:anywhere}
-a.facttile .v{color:#005C2E}
-.kpbox{width:20px;height:20px;accent-color:#007A3D;cursor:pointer}
+a.facttile .v{color:var(--accent2)}
+.kpbox{width:20px;height:20px;accent-color:var(--accent);cursor:pointer}
 .facttile.wide{grid-column:span 2}
 @media (max-width:400px){.facttile.wide{grid-column:auto}}
 .card{transition:border-color .15s}
-.card:hover{border-color:#007A3D}
+.card:hover{border-color:var(--accent)}
 .cardbtn{font:inherit;text-align:left;background:none;border:0;padding:0;cursor:pointer;color:inherit;display:flex;flex-direction:column;gap:12px;width:100%}
-input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid #007A3D;outline-offset:2px}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <noscript>Для работы каталога нужен JavaScript.</noscript>
 <script type="text/plain" id="tpl">
-<div style="font-family: Inter, system-ui, sans-serif; color: #1B1F1D; background: #F4F5F3; min-height: 100vh">
-  <header style="background: #FFFFFF; border-bottom: 1px solid #E1E4E1">
+<div style="font-family: Inter, system-ui, sans-serif; color: var(--text); background: var(--bg); min-height: 100vh">
+  <header style="background: var(--surface); border-bottom: 1px solid var(--border)">
     <div style="max-width: 1440px; margin: 0 auto; padding: 24px 32px; box-sizing: border-box">
-    <div style="font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: #007A3D; margin-bottom: 6px">ГКБ №7 · Система навигации</div>
+    <div style="font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px">ГКБ №7 · Система навигации</div>
     <div style="display: flex; flex-wrap: wrap; gap: 16px 32px; align-items: flex-end; justify-content: space-between">
       <div style="display: flex; flex-direction: column; gap: 6px">
         <h1 style="margin: 0; font-size: 30px; line-height: 1.15; font-weight: 700">Каталог элементов навигации</h1>
-        <p style="margin: 0; font-size: 14px; color: #5C6460; max-width: 640px">Фильтруйте указатели по этажам, блокам и техническим характеристикам. Этаж и блок берутся из ID: q1<b>10</b>-<b>1</b>-81 — блок 10, этаж 1, элемент №81. Этаж 111 означает «все этажи».</p>
-        <div style="font-size: 13px; color: #5C6460; margin-top: 10px">Автор: <a href="https://wa.me/77012142992" target="_blank" rel="noopener" style="color: #007A3D; font-weight: 600; text-decoration: none">Тимур Ходжаев</a></div>
+        <p style="margin: 0; font-size: 14px; color: var(--muted); max-width: 640px">Фильтруйте указатели по этажам, блокам и техническим характеристикам. Этаж и блок берутся из ID: q1<b>10</b>-<b>1</b>-81 — блок 10, этаж 1, элемент №81. Этаж 111 означает «все этажи».</p>
+        <div style="font-size: 13px; color: var(--muted); margin-top: 10px">Автор: <a href="https://wa.me/77012142992" target="_blank" rel="noopener" style="color: var(--accent); font-weight: 600; text-decoration: none">Тимур Ходжаев</a></div>
       </div>
+      <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px">
+      <button type="button" class="sw" role="switch" aria-checked="{{darkOn}}" onClick="{{toggleTheme}}">Тёмная тема<span class="track" aria-hidden="true"><span class="knob"></span></span></button>
       <div style="display: flex; gap: 24px; flex-wrap: wrap">
         <div style="display: flex; flex-direction: column; gap: 2px">
           <div style="font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums">{{stats.shown}}</div>
-          <div style="font-size: 12px; color: #5C6460">{{stats.totalLabel}}</div>
+          <div style="font-size: 12px; color: var(--muted)">{{stats.totalLabel}}</div>
         </div>
         <div style="display: flex; flex-direction: column; gap: 2px">
           <div style="font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums">{{stats.types}}</div>
-          <div style="font-size: 12px; color: #5C6460">{{stats.typesLabel}}</div>
+          <div style="font-size: 12px; color: var(--muted)">{{stats.typesLabel}}</div>
         </div>
+      </div>
       </div>
     </div>
     </div>
@@ -74,7 +80,7 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
 
   <div style="max-width: 1440px; margin: 0 auto; padding: 24px 32px 64px; display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; box-sizing: border-box">
 
-    <aside aria-label="Фильтры" style="flex: 1 1 300px; max-width: 360px; min-width: 0; display: flex; flex-direction: column; gap: 20px; background: #FFFFFF; border: 1px solid #E1E4E1; border-radius: 14px; padding: 20px; box-sizing: border-box">
+    <aside aria-label="Фильтры" style="flex: 1 1 300px; max-width: 360px; min-width: 0; display: flex; flex-direction: column; gap: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; box-sizing: border-box">
       <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
         <h2 style="margin: 0; font-size: 16px; font-weight: 700">Фильтры</h2>
         <button type="button" class="chip" onClick="{{reset}}" disabled="{{noFilters}}">Сбросить</button>
@@ -82,12 +88,12 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
 
       <div style="display: flex; flex-direction: column; gap: 8px">
         <label for="q" style="font-size: 13px; font-weight: 600">Поиск</label>
-        <input id="q" type="search" value="{{q}}" onInput="{{onQ}}" placeholder="ID, тип, размер…" style="font: inherit; font-size: 14px; min-height: 44px; padding: 0 12px; border: 1px solid #C9CEC9; border-radius: 10px; background: #FFFFFF; color: #1B1F1D; box-sizing: border-box; width: 100%"/>
+        <input id="q" type="search" value="{{q}}" onInput="{{onQ}}" placeholder="ID, тип, размер…" style="font: inherit; font-size: 14px; min-height: 44px; padding: 0 12px; border: 1px solid var(--track); border-radius: 10px; background: var(--surface); color: var(--text); box-sizing: border-box; width: 100%"/>
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 8px">
         <label for="typeSel" style="font-size: 13px; font-weight: 600">Тип</label>
-        <select id="typeSel" value="{{typeSel}}" onChange="{{onType}}" style="font: inherit; font-size: 14px; min-height: 44px; padding: 0 10px; border: 1px solid #C9CEC9; border-radius: 10px; background: #FFFFFF; color: #1B1F1D; width: 100%">
+        <select id="typeSel" value="{{typeSel}}" onChange="{{onType}}" style="font: inherit; font-size: 14px; min-height: 44px; padding: 0 10px; border: 1px solid var(--track); border-radius: 10px; background: var(--surface); color: var(--text); width: 100%">
           <option value="">Все типы</option>
           <sc-for list="{{typeOptions}}" as="to" hint-placeholder-count="5">
             <option value="{{to.value}}">{{to.label}}</option>
@@ -96,7 +102,7 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
       </div>
 
       <sc-for list="{{facets}}" as="f" hint-placeholder-count="6">
-        <div role="group" aria-label="{{f.label}}" style="display: flex; flex-direction: column; gap: 8px; padding-top: 16px; border-top: 1px solid #ECEEEC">
+        <div role="group" aria-label="{{f.label}}" style="display: flex; flex-direction: column; gap: 8px; padding-top: 16px; border-top: 1px solid var(--line)">
           <div style="font-size: 13px; font-weight: 600">{{f.label}}</div>
           <div style="display: flex; flex-wrap: wrap; gap: 6px">
             <sc-for list="{{f.options}}" as="o" hint-placeholder-count="4">
@@ -111,7 +117,7 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
 
     <main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
       <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between">
-        <div role="group" aria-label="Вид" style="display: inline-flex; gap: 4px; padding: 4px; background: #E7EAE7; border-radius: 12px">
+        <div role="group" aria-label="Вид" style="display: inline-flex; gap: 4px; padding: 4px; background: var(--border4); border-radius: 12px">
           <button type="button" class="seg" aria-pressed="{{viewList}}" onClick="{{showList}}">Элементы</button>
           <button type="button" class="seg" aria-pressed="{{viewTypes}}" onClick="{{showTypes}}">Типы</button>
         </div>
@@ -127,45 +133,45 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
       </div>
 
       <sc-if value="{{hasKp}}" hint-placeholder-val="{{ false }}">
-        <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background: #E6F3EB; border: 1px solid #BFE3CE; border-radius: 12px; padding: 10px 12px">
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background: var(--accent-soft); border: 1px solid var(--accent-border); border-radius: 12px; padding: 10px 12px">
           <button type="button" class="speclink" onClick="{{exportKp}}">{{kpLabel}}</button>
           <button type="button" class="chip" onClick="{{clearKp}}">Снять выбор</button>
-          <span style="font-size: 13px; color: #3F4743">{{kpStatus}}</span>
+          <span style="font-size: 13px; color: var(--text2)">{{kpStatus}}</span>
         </div>
       </sc-if>
 
       <sc-if value="{{loading}}" hint-placeholder-val="{{ false }}">
-        <div style="padding: 48px; text-align: center; color: #5C6460; background: #FFFFFF; border: 1px solid #E1E4E1; border-radius: 14px">Загрузка данных спецификации…</div>
+        <div style="padding: 48px; text-align: center; color: var(--muted); background: var(--surface); border: 1px solid var(--border); border-radius: 14px">Загрузка данных спецификации…</div>
       </sc-if>
       <sc-if value="{{error}}" hint-placeholder-val="{{ false }}">
-        <div style="padding: 24px; color: #8A1F11; background: #FFF4F2; border: 1px solid #F2C9C2; border-radius: 14px">Не удалось загрузить данные: {{errorText}}</div>
+        <div style="padding: 24px; color: var(--danger-text); background: var(--danger-bg); border: 1px solid var(--danger-border); border-radius: 14px">Не удалось загрузить данные: {{errorText}}</div>
       </sc-if>
       <sc-if value="{{empty}}" hint-placeholder-val="{{ false }}">
-        <div style="padding: 48px; text-align: center; color: #5C6460; background: #FFFFFF; border: 1px solid #E1E4E1; border-radius: 14px">Под выбранные условия не подходит ни один элемент.</div>
+        <div style="padding: 48px; text-align: center; color: var(--muted); background: var(--surface); border: 1px solid var(--border); border-radius: 14px">Под выбранные условия не подходит ни один элемент.</div>
       </sc-if>
 
       <sc-if value="{{showTable}}" hint-placeholder-val="{{ true }}">
-        <div style="background: #FFFFFF; border: 1px solid #E1E4E1; border-radius: 14px; overflow-x: auto">
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow-x: auto">
           <table style="width: 100%; min-width: 0; table-layout: fixed; border-collapse: collapse; font-size: 13px">
             <thead>
-              <tr style="text-align: left; color: #5C6460; font-size: 12px">
-                <th scope="col" style="width: 12.3%; padding: 12px 16px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Эскиз</th>
-                <th scope="col" style="width: 10.6%; padding: 12px 8px; font-weight: 600; border-bottom: 1px solid #E1E4E1">ID</th>
-                <th scope="col" style="width: 5.7%; padding: 12px 6px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Этаж</th>
-                <th scope="col" style="width: 5.5%; padding: 12px 4px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Блок</th>
-                <th scope="col" style="width: 6.9%; padding: 12px 4px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Тип</th>
-                <th scope="col" style="width: 7.4%; padding: 12px 6px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Класс</th>
-                <th scope="col" style="width: 14.3%; padding: 12px 6px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Вид элемента</th>
-                <th scope="col" style="width: 18.6%; padding: 12px 6px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Конструкция</th>
-                <th scope="col" style="width: 10%; padding: 12px 6px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Габариты, мм</th>
-                <th scope="col" style="width: 8.7%; padding: 12px 12px 12px 6px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Выбрать для КП</th>
+              <tr style="text-align: left; color: var(--muted); font-size: 12px">
+                <th scope="col" style="width: 12.3%; padding: 12px 16px; font-weight: 600; border-bottom: 1px solid var(--border)">Эскиз</th>
+                <th scope="col" style="width: 10.6%; padding: 12px 8px; font-weight: 600; border-bottom: 1px solid var(--border)">ID</th>
+                <th scope="col" style="width: 5.7%; padding: 12px 6px; font-weight: 600; border-bottom: 1px solid var(--border)">Этаж</th>
+                <th scope="col" style="width: 5.5%; padding: 12px 4px; font-weight: 600; border-bottom: 1px solid var(--border)">Блок</th>
+                <th scope="col" style="width: 6.9%; padding: 12px 4px; font-weight: 600; border-bottom: 1px solid var(--border)">Тип</th>
+                <th scope="col" style="width: 7.4%; padding: 12px 6px; font-weight: 600; border-bottom: 1px solid var(--border)">Класс</th>
+                <th scope="col" style="width: 14.3%; padding: 12px 6px; font-weight: 600; border-bottom: 1px solid var(--border)">Вид элемента</th>
+                <th scope="col" style="width: 18.6%; padding: 12px 6px; font-weight: 600; border-bottom: 1px solid var(--border)">Конструкция</th>
+                <th scope="col" style="width: 10%; padding: 12px 6px; font-weight: 600; border-bottom: 1px solid var(--border)">Габариты, мм</th>
+                <th scope="col" style="width: 8.7%; padding: 12px 12px 12px 6px; font-weight: 600; border-bottom: 1px solid var(--border)">Выбрать для КП</th>
               </tr>
             </thead>
             <tbody>
               <sc-for list="{{rows}}" as="r" hint-placeholder-count="8">
-                <tr class="row" style="border-bottom: 1px solid #EEF0EE; vertical-align: middle">
+                <tr class="row" style="border-bottom: 1px solid var(--line); vertical-align: middle">
                   <td style="padding: 8px 16px">
-                    <div style="position: relative; width: 104px; height: 56px; background: #F0F1EF; border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden">
+                    <div style="position: relative; width: 104px; height: 56px; background: var(--surface2); border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden">
                       <sc-if value="{{r.hasQty}}" hint-placeholder-val="{{ false }}">
                         <span style="position: absolute; right: 3px; bottom: 3px; font-size: 10px; line-height: 1; font-weight: 600; padding: 2px 4px; border-radius: 4px; background: rgba(27,31,29,.78); color: #FFFFFF; font-variant-numeric: tabular-nums">{{r.qtyLabel}}</span>
                       </sc-if>
@@ -173,7 +179,7 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
                         <img src="{{r.img}}" alt="Эскиз {{r.type}}" loading="lazy" style="max-width: 100%; max-height: 100%; object-fit: contain"/>
                       </sc-if>
                       <sc-if value="{{r.noImg}}" hint-placeholder-val="{{ false }}">
-                        <span style="font-size: 11px; color: #5C6460">нет эскиза</span>
+                        <span style="font-size: 11px; color: var(--muted)">нет эскиза</span>
                       </sc-if>
                     </div>
                   </td>
@@ -181,9 +187,9 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
                   <td style="padding: 8px 6px; white-space: nowrap">{{r.floorLabel}}</td>
                   <td style="padding: 8px 4px">{{r.blockLabel}}</td>
                   <td style="padding: 8px 4px; white-space: nowrap; font-weight: 600">{{r.type}}</td>
-                  <td style="padding: 8px 6px; white-space: nowrap; color: #3F4743">{{r.cls}}</td>
+                  <td style="padding: 8px 6px; white-space: nowrap; color: var(--text2)">{{r.cls}}</td>
                   <td style="padding: 8px 6px; font-weight: 500">{{r.title}}</td>
-                  <td style="padding: 8px 6px; color: #3F4743">{{r.sub}}</td>
+                  <td style="padding: 8px 6px; color: var(--text2)">{{r.sub}}</td>
                   <td style="padding: 8px 6px; white-space: pre-line; line-height: 1.5; font-variant-numeric: tabular-nums">{{r.dims}}</td>
                   <td style="padding: 8px 12px 8px 6px; text-align: center"><input type="checkbox" class="kpbox" checked="{{r.checked}}" onChange="{{r.toggleKp}}" aria-label="Выбрать {{r.id}} для КП"/></td>
                 </tr>
@@ -196,27 +202,27 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
       <sc-if value="{{showCards}}" hint-placeholder-val="{{ false }}">
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px">
           <sc-for list="{{cards}}" as="c" hint-placeholder-count="6">
-            <article class="card" style="background: #FFFFFF; border: 1px solid #E1E4E1; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+            <article class="card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
               <button type="button" class="cardbtn" onClick="{{c.open}}" aria-label="Характеристики {{c.type}}">
-                <div style="height: 150px; background: #F0F1EF; border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 10px; box-sizing: border-box">
+                <div style="height: 150px; background: var(--surface2); border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 10px; box-sizing: border-box">
                   <sc-if value="{{c.img}}" hint-placeholder-val="{{ true }}">
                     <img src="{{c.img}}" alt="Эскиз {{c.type}}" loading="lazy" style="max-width: 100%; max-height: 100%; object-fit: contain"/>
                   </sc-if>
                   <sc-if value="{{c.noImg}}" hint-placeholder-val="{{ false }}">
-                    <span style="font-size: 12px; color: #5C6460">нет описания в спецификации</span>
+                    <span style="font-size: 12px; color: var(--muted)">нет описания в спецификации</span>
                   </sc-if>
                 </div>
                 <div style="display: flex; justify-content: space-between; gap: 8px; align-items: baseline">
                   <span style="font-weight: 700; font-size: 15px">{{c.type}}</span>
-                  <span style="font-size: 12px; color: #5C6460">{{c.cls}}</span>
+                  <span style="font-size: 12px; color: var(--muted)">{{c.cls}}</span>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 2px">
                   <span style="font-weight: 500; font-size: 14px">{{c.title}}</span>
-                  <span style="font-size: 13px; color: #5C6460">{{c.sub}}</span>
-                  <span style="font-size: 13px; color: #3F4743; white-space: pre-line; font-variant-numeric: tabular-nums">{{c.dims}}</span>
+                  <span style="font-size: 13px; color: var(--muted)">{{c.sub}}</span>
+                  <span style="font-size: 13px; color: var(--text2); white-space: pre-line; font-variant-numeric: tabular-nums">{{c.dims}}</span>
                 </div>
               </button>
-              <div style="font-size: 12px; font-weight: 600; color: #5C6460">{{c.countLabel}}</div>
+              <div style="font-size: 12px; font-weight: 600; color: var(--muted)">{{c.countLabel}}</div>
               <div style="display: flex; flex-wrap: wrap; gap: 6px">
                 <sc-for list="{{c.ids}}" as="ci" hint-placeholder-count="3">
                   <button type="button" class="idbtn" onClick="{{ci.open}}">{{ci.id}}</button>
@@ -227,28 +233,28 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
         </div>
       </sc-if>
 
-      <p style="margin: 8px 0 0; font-size: 12px; color: #5C6460">Источник: «Описание знаков ГКБ7» (PDF). Полный перечень ID — реестр на стр. 60–80; характеристики — страницы типов 4–59. Для типов 55–61 описания в документе нет. Таблички–номера type_63 (108 шт. на 109 пронумерованных кабинетов) в реестре PDF отсутствуют и показаны одной строкой с общим ID q1-111-1; их распределение по кабинетам, этажам и блокам взято из файла «список-кабинетов-гкб7.xlsx», и количество считается по фильтрам «Этаж» и «Блок».</p>
+      <p style="margin: 8px 0 0; font-size: 12px; color: var(--muted)">Источник: «Описание знаков ГКБ7» (PDF). Полный перечень ID — реестр на стр. 60–80; характеристики — страницы типов 4–59. Для типов 55–61 описания в документе нет. Таблички–номера type_63 (108 шт. на 109 пронумерованных кабинетов) в реестре PDF отсутствуют и показаны одной строкой с общим ID q1-111-1; их распределение по кабинетам, этажам и блокам взято из файла «список-кабинетов-гкб7.xlsx», и количество считается по фильтрам «Этаж» и «Блок».</p>
     </main>
   </div>
 
   <sc-if value="{{modal}}" hint-placeholder-val="{{ false }}">
     <div style="position: fixed; inset: 0; background: rgba(20,24,22,.45); display: flex; align-items: flex-start; justify-content: center; padding: 32px 16px; overflow-y: auto; z-index: 10; box-sizing: border-box">
-      <div role="dialog" aria-modal="true" aria-label="{{d.heading}}" style="background: #FFFFFF; border-radius: 16px; width: 100%; max-width: 880px; padding: 24px; display: flex; flex-direction: column; gap: 20px; box-sizing: border-box; box-shadow: 0 20px 60px rgba(0,0,0,.25)">
+      <div role="dialog" aria-modal="true" aria-label="{{d.heading}}" style="background: var(--surface); border-radius: 16px; width: 100%; max-width: 880px; padding: 24px; display: flex; flex-direction: column; gap: 20px; box-sizing: border-box; box-shadow: 0 20px 60px rgba(0,0,0,.25)">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px">
           <div style="display: flex; flex-direction: column; gap: 4px">
-            <div style="font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: #007A3D">{{d.kicker}}</div>
+            <div style="font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--accent)">{{d.kicker}}</div>
             <h2 style="margin: 0; font-size: 24px; font-weight: 700; font-family: 'IBM Plex Mono', ui-monospace, monospace">{{d.heading}}</h2>
-            <div style="font-size: 14px; color: #3F4743">{{d.title}} · {{d.sub}}</div>
+            <div style="font-size: 14px; color: var(--text2)">{{d.title}} · {{d.sub}}</div>
           </div>
           <button type="button" class="chip" onClick="{{closeModal}}" aria-label="Закрыть">Закрыть</button>
         </div>
 
         <sc-if value="{{d.hasImg}}" hint-placeholder-val="{{ true }}">
-          <div style="display: flex; flex-wrap: wrap; gap: 12px; background: #F0F1EF; border-radius: 12px; padding: 16px; justify-content: center">
+          <div style="display: flex; flex-wrap: wrap; gap: 12px; background: var(--surface2); border-radius: 12px; padding: 16px; justify-content: center">
             <sc-for list="{{d.imgs}}" as="im" hint-placeholder-count="1">
               <figure style="margin: 0; flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 8px">
                 <img src="{{im.src}}" alt="{{im.cap}}" style="max-width: 100%; max-height: 320px; object-fit: contain"/>
-                <figcaption style="font-size: 12px; color: #5C6460">{{im.cap}}</figcaption>
+                <figcaption style="font-size: 12px; color: var(--muted)">{{im.cap}}</figcaption>
               </figure>
             </sc-for>
           </div>
@@ -257,8 +263,8 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
         <sc-if value="{{d.isEl}}" hint-placeholder-val="{{ true }}">
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px">
             <sc-for list="{{d.elFacts}}" as="ef" hint-placeholder-count="4">
-              <div style="background: #F4F5F3; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 4px">
-                <span style="font-size: 12px; color: #5C6460">{{ef.k}}</span>
+              <div style="background: var(--surface2); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 4px">
+                <span style="font-size: 12px; color: var(--muted)">{{ef.k}}</span>
                 <span style="font-size: 15px; font-weight: 600">{{ef.v}}</span>
               </div>
             </sc-for>
@@ -297,8 +303,8 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
           <div style="display: flex; flex-direction: column; gap: 12px">
             <sc-for list="{{d.specImgs}}" as="si" hint-placeholder-count="1">
               <figure style="margin: 0; display: flex; flex-direction: column; gap: 6px">
-                <img src="{{si.src}}" alt="Страница спецификации {{si.cap}}" style="width: 100%; height: auto; border: 1px solid #E1E4E1; border-radius: 10px"/>
-                <figcaption style="font-size: 12px; color: #5C6460">Страница спецификации: {{si.cap}}</figcaption>
+                <img src="{{si.src}}" alt="Страница спецификации {{si.cap}}" style="width: 100%; height: auto; border: 1px solid var(--border); border-radius: 10px"/>
+                <figcaption style="font-size: 12px; color: var(--muted)">Страница спецификации: {{si.cap}}</figcaption>
               </figure>
             </sc-for>
           </div>
@@ -307,8 +313,8 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
         <div style="display: flex; flex-direction: column; gap: 0">
           <h3 style="margin: 0 0 8px; font-size: 15px; font-weight: 700">Технические характеристики</h3>
           <sc-for list="{{d.specs}}" as="sp" hint-placeholder-count="8">
-            <div style="display: flex; flex-wrap: wrap; gap: 4px 16px; padding: 10px 0; border-top: 1px solid #ECEEEC; font-size: 14px">
-              <span style="flex: 0 0 220px; color: #5C6460">{{sp.k}}</span>
+            <div style="display: flex; flex-wrap: wrap; gap: 4px 16px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 14px">
+              <span style="flex: 0 0 220px; color: var(--muted)">{{sp.k}}</span>
               <span style="flex: 1 1 260px; min-width: 0; white-space: pre-line">{{sp.v}}</span>
             </div>
           </sc-for>
@@ -317,10 +323,10 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
         <sc-if value="{{d.hasRooms}}" hint-placeholder-val="{{ false }}">
           <div style="display: flex; flex-direction: column; gap: 8px">
             <h3 style="margin: 0; font-size: 15px; font-weight: 700">{{d.roomsLabel}}</h3>
-            <div style="max-height: 320px; overflow: auto; border: 1px solid #E1E4E1; border-radius: 10px">
+            <div style="max-height: 320px; overflow: auto; border: 1px solid var(--border); border-radius: 10px">
               <table style="width: 100%; min-width: 560px; border-collapse: collapse; font-size: 13px">
                 <thead>
-                  <tr style="text-align: left; color: #5C6460; font-size: 12px; background: #F4F5F3">
+                  <tr style="text-align: left; color: var(--muted); font-size: 12px; background: var(--surface2)">
                     <th scope="col" style="padding: 8px 12px; font-weight: 600">Номер на табличке</th>
                     <th scope="col" style="padding: 8px; font-weight: 600">Помещение</th>
                     <th scope="col" style="padding: 8px; font-weight: 600">Наименование</th>
@@ -330,7 +336,7 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
                 </thead>
                 <tbody>
                   <sc-for list="{{d.rooms}}" as="rm" hint-placeholder-count="5">
-                    <tr style="border-top: 1px solid #EEF0EE">
+                    <tr style="border-top: 1px solid var(--line)">
                       <td style="padding: 6px 12px; font-weight: 600; font-variant-numeric: tabular-nums">{{rm.plate}}</td>
                       <td style="padding: 6px 8px; white-space: nowrap; font-family: 'IBM Plex Mono', ui-monospace, monospace">{{rm.room}}</td>
                       <td style="padding: 6px 8px">{{rm.name}}</td>
@@ -345,7 +351,7 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
         </sc-if>
 
         <sc-if value="{{d.hasList}}" hint-placeholder-val="{{ false }}">
-          <div style="background: #E6F3EB; border-radius: 10px; padding: 12px 16px; font-size: 14px">Перечень кабинетов с номерами: <a href="{{d.listUrl}}" target="_blank" rel="noopener">открыть файл на Яндекс Диске</a></div>
+          <div style="background: var(--accent-soft); border-radius: 10px; padding: 12px 16px; font-size: 14px">Перечень кабинетов с номерами: <a href="{{d.listUrl}}" target="_blank" rel="noopener">открыть файл на Яндекс Диске</a></div>
         </sc-if>
 
         <div style="display: flex; flex-direction: column; gap: 8px">
@@ -437,6 +443,13 @@ const platesOf = (rooms) => Object.keys(rooms.reduce((m, r) => { m[r.floor + '|'
 const distinctOf = (list, k) => Object.keys(list.reduce((m, r) => { m[r[k]] = 1; return m; }, {})).sort((a, b) => a - b);
 const cmpEl = (a, b) => (FLOOR_ORDER.indexOf(a.floor) - FLOOR_ORDER.indexOf(b.floor)) || ((a.block || 0) - (b.block || 0)) || (a.n - b.n);
 
+const THEME_KEY = 'gkb7-theme';
+const themeLoad = () => {
+  try { const v = localStorage.getItem(THEME_KEY); if (v === 'dark' || v === 'light') return v; } catch (e) {}
+  try { if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark'; } catch (e) {}
+  return 'light';
+};
+const themeApply = (t) => { try { if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark'); else document.documentElement.removeAttribute('data-theme'); } catch (e) {} };
 const KP_KEY = 'gkb7-kp-selection';
 const kpLoad = () => { try { return JSON.parse(sessionStorage.getItem(KP_KEY) || '{}') || {}; } catch (e) { return {}; } };
 const kpStore = (kp) => { try { sessionStorage.setItem(KP_KEY, JSON.stringify(kp)); } catch (e) {} };
@@ -508,9 +521,10 @@ function xlsxBytes(head, rows, widths, linkCol, links) {
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { data: null, error: null, q: '', sel: {}, typeSel: '', view: 'list', open: null, showStreet: false, showGobo: false, showSpec: false, kp: kpLoad(), kpStatus: '' };
+    this.state = { data: null, error: null, q: '', sel: {}, typeSel: '', view: 'list', open: null, showStreet: false, showGobo: false, showSpec: false, kp: kpLoad(), kpStatus: '', theme: themeLoad() };
   }
   componentDidMount() {
+    themeApply(this.state.theme);
     Promise.resolve({ok:true,json:function(){return Promise.resolve(JSON.parse(JSON.stringify(window.NAV_DATA)));}}).then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then((data) => {
         data.elements.forEach((e) => { if (/^q\d+-111-/.test(e.id)) { e.any = true; e.floor = 'any'; e.block = null; } if (e.rooms) e.qty = platesOf(e.rooms); });
@@ -518,6 +532,12 @@ class Component extends DCLogic {
         this.setState({ data });
       })
       .catch((err) => this.setState({ error: String(err && err.message || err) }));
+  }
+  toggleTheme() {
+    const t = this.state.theme === 'dark' ? 'light' : 'dark';
+    themeApply(t);
+    try { localStorage.setItem(THEME_KEY, t); } catch (e) {}
+    this.setState({ theme: t });
   }
   toggleKp(id) {
     const kp = Object.assign({}, this.state.kp);
@@ -787,6 +807,8 @@ class Component extends DCLogic {
       reset: () => this.setState({ q: '', sel: {}, typeSel: '' }),
       viewList: view === 'list' ? 'true' : 'false', viewTypes: view === 'types' ? 'true' : 'false',
       showList: () => this.setState({ view: 'list' }), showTypes: () => this.setState({ view: 'types' }),
+      darkOn: this.state.theme === 'dark' ? 'true' : 'false',
+      toggleTheme: () => this.toggleTheme(),
       goboOn: showGobo ? 'true' : 'false',
       toggleGobo: () => {
         if (showGobo) {
