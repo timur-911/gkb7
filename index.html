@@ -798,7 +798,7 @@ class Component extends DCLogic {
     return {
       stats: {
         shown: filtered.length, total: els.length, types: Object.keys(byType).length,
-        totalLabel: 'из ' + els.length + ' ' + plural(els.length, 'элемента', 'элементов', 'элементов'),
+        totalLabel: 'из ' + els.length + ' ' + plural(els.length, 'элемента', 'элемента', 'элементов'),
         typesLabel: plural(Object.keys(byType).length, 'тип', 'типа', 'типов') + ' в выборке'
       },
       q: q, onQ: (ev) => this.setState({ q: ev.target.value }),
