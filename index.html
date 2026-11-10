@@ -582,8 +582,7 @@ class Component extends DCLogic {
     const o = this.state.open;
     if (!o) return;
     const url = cardUrl(o.id);
-    const title = (o.kind === 'el' ? 'Элемент навигации ' : 'Тип элемента ') + o.id + ' — каталог ГКБ №7';
-    try { if (navigator.share) { navigator.share({ title: title, text: title, url: url }).catch(() => null); return; } } catch (e) {}
+    try { if (navigator.share) { navigator.share({ url: url }).catch(() => null); return; } } catch (e) {}
     try {
       navigator.clipboard.writeText(url).then(
         () => this.setState({ shareMsg: 'Ссылка скопирована' }),
