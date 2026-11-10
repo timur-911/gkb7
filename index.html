@@ -898,7 +898,8 @@ class Component extends DCLogic {
       toggleSpec: () => this.setState({ showSpec: !this.state.showSpec }),
       selectAllKp: () => {
         const kp = Object.assign({}, this.state.kp);
-        filtered.forEach((e) => { kp[e.id] = 1; });
+        const allOn = filtered.length > 0 && filtered.every((e) => kp[e.id]);
+        filtered.forEach((e) => { if (allOn) delete kp[e.id]; else kp[e.id] = 1; });
         kpStore(kp);
         this.setState({ kp: kp, kpStatus: '' });
       },
