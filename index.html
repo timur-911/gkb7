@@ -50,22 +50,27 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
 <script type="text/plain" id="tpl">
 <div style="font-family: Inter, system-ui, sans-serif; color: #1B1F1D; background: #F4F5F3; min-height: 100vh">
   <header style="background: #FFFFFF; border-bottom: 1px solid #E1E4E1">
-    <div style="max-width: 1440px; margin: 0 auto; padding: 24px 32px; display: flex; flex-wrap: wrap; gap: 16px 32px; align-items: flex-end; justify-content: space-between; box-sizing: border-box">
+    <div style="max-width: 1440px; margin: 0 auto; padding: 24px 32px; box-sizing: border-box">
+    <div style="display: flex; flex-wrap: wrap; gap: 4px 24px; align-items: baseline; justify-content: space-between; margin-bottom: 6px">
+      <div style="font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: #007A3D">ГКБ №7 · Система навигации</div>
+      <div style="font-size: 13px; color: #5C6460; white-space: nowrap">Автор: <a href="https://wa.me/77012142992" target="_blank" rel="noopener" style="color: #007A3D; font-weight: 600; text-decoration: none">Тимур Ходжаев</a></div>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 16px 32px; align-items: flex-end; justify-content: space-between">
       <div style="display: flex; flex-direction: column; gap: 6px">
-        <div style="font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: #007A3D">ГКБ №7 · Система навигации</div>
         <h1 style="margin: 0; font-size: 30px; line-height: 1.15; font-weight: 700">Каталог элементов навигации</h1>
         <p style="margin: 0; font-size: 14px; color: #5C6460; max-width: 640px">Фильтруйте указатели по этажам, блокам и техническим характеристикам. Этаж и блок берутся из ID: q1<b>10</b>-<b>1</b>-81 — блок 10, этаж 1, элемент №81. Этаж 111 означает «все этажи».</p>
       </div>
       <div style="display: flex; gap: 24px; flex-wrap: wrap">
         <div style="display: flex; flex-direction: column; gap: 2px">
           <div style="font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums">{{stats.shown}}</div>
-          <div style="font-size: 12px; color: #5C6460">из {{stats.total}} элементов</div>
+          <div style="font-size: 12px; color: #5C6460">{{stats.totalLabel}}</div>
         </div>
         <div style="display: flex; flex-direction: column; gap: 2px">
           <div style="font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums">{{stats.types}}</div>
-          <div style="font-size: 12px; color: #5C6460">типов в выборке</div>
+          <div style="font-size: 12px; color: #5C6460">{{stats.typesLabel}}</div>
         </div>
       </div>
+    </div>
     </div>
   </header>
 
@@ -153,8 +158,8 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
                 <th scope="col" style="width: 6.9%; padding: 12px 4px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Тип</th>
                 <th scope="col" style="width: 7.4%; padding: 12px 6px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Класс</th>
                 <th scope="col" style="width: 14.3%; padding: 12px 6px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Вид элемента</th>
-                <th scope="col" style="width: 16.2%; padding: 12px 6px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Конструкция</th>
-                <th scope="col" style="width: 12.4%; padding: 12px 6px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Габариты</th>
+                <th scope="col" style="width: 18.6%; padding: 12px 6px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Конструкция</th>
+                <th scope="col" style="width: 10%; padding: 12px 6px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Габариты, мм</th>
                 <th scope="col" style="width: 8.7%; padding: 12px 12px 12px 6px; font-weight: 600; border-bottom: 1px solid #E1E4E1">Выбрать для КП</th>
               </tr>
             </thead>
@@ -421,10 +426,13 @@ const FACETS = [
   { key: 'face', label: 'Лицевая сторона', get: (e, t) => t.face || NA },
   { key: 'cls', label: 'Класс', get: (e) => e.cls || NA }
 ];
+const plural = (n, one, few, many) => { const a = Math.abs(n) % 100, b = a % 10; return a > 10 && a < 20 ? many : b > 1 && b < 5 ? few : b === 1 ? one : many; };
+const noMm = (s) => String(s == null ? '' : s).split(' мм').join('');
 const EMPTY_TYPE = { title: 'Тип не указан', sub: null, cls: null, placement: NA, light: NA, sides: null, dims: null, height: null, mount: null, mountGroup: null, img: [], pages: [], spec: false };
 const typeNum = (k) => k ? parseInt(String(k).replace('type_', ''), 10) : 999;
 const floorLabel = (f) => f === 'any' ? 'Все этажи' : f === 'street' ? 'Улица' : f + ' этаж';
 const qtyOf = (e) => e.qty || 1;
+const floorsLabel = (fs) => fs.join(', ') + (fs.length > 1 ? ' этажи' : ' этаж');
 const blocksLabel = (part, all) => { const p = distinctOf(part, 'block'); return p.length && p.length === distinctOf(all, 'block').length ? 'Все блоки' : p.join(', '); };
 const platesOf = (rooms) => Object.keys(rooms.reduce((m, r) => { m[r.floor + '|' + r.block + '|' + r.plate] = 1; return m; }, {})).length;
 const distinctOf = (list, k) => Object.keys(list.reduce((m, r) => { m[r[k]] = 1; return m; }, {})).sort((a, b) => a - b);
@@ -524,17 +532,17 @@ class Component extends DCLogic {
     const kp = this.state.kp;
     const picked = data.elements.filter((e) => kp[e.id]).sort(cmpEl);
     if (!picked.length) return;
-    const head = ['ID', '\u042d\u0442\u0430\u0436', '\u0411\u043b\u043e\u043a', '\u0422\u0438\u043f', '\u041a\u043b\u0430\u0441\u0441', '\u0412\u0438\u0434 \u044d\u043b\u0435\u043c\u0435\u043d\u0442\u0430', '\u041a\u043e\u043d\u0441\u0442\u0440\u0443\u043a\u0446\u0438\u044f', '\u0413\u0430\u0431\u0430\u0440\u0438\u0442\u044b', '\u0421\u0442\u0440\u0430\u043d\u0438\u0446\u0430 \u0441\u043f\u0435\u0446\u0438\u0444\u0438\u043a\u0430\u0446\u0438\u0438', '\u0418\u0441\u0445\u043e\u0434\u043d\u044b\u0439 \u0444\u0430\u0439\u043b'];
+    const head = ['ID', '\u042d\u0442\u0430\u0436', '\u0411\u043b\u043e\u043a', '\u0422\u0438\u043f', '\u041a\u043b\u0430\u0441\u0441', '\u0412\u0438\u0434 \u044d\u043b\u0435\u043c\u0435\u043d\u0442\u0430', '\u041a\u043e\u043d\u0441\u0442\u0440\u0443\u043a\u0446\u0438\u044f', '\u0413\u0430\u0431\u0430\u0440\u0438\u0442\u044b, \u043c\u043c', '\u0421\u0442\u0440\u0430\u043d\u0438\u0446\u0430 \u0441\u043f\u0435\u0446\u0438\u0444\u0438\u043a\u0430\u0446\u0438\u0438', '\u0418\u0441\u0445\u043e\u0434\u043d\u044b\u0439 \u0444\u0430\u0439\u043b'];
     const rows = picked.map((e) => {
       const t = data.types[e.type] || EMPTY_TYPE;
       const pgs = (t.pages || []).slice().sort((a, b) => a - b);
       const rms = e.rooms ? this.roomsFor(e, null) : null;
       return [
         e.id,
-        rms ? distinctOf(rms, 'floor').join(', ') + ' \u044d\u0442\u0430\u0436' : floorLabel(e.floor),
+        rms ? floorsLabel(distinctOf(rms, 'floor')) : floorLabel(e.floor),
         rms ? blocksLabel(rms, e.rooms) : (e.block == null ? '\u0423\u043b\u0438\u0446\u0430' : String(e.block)),
         e.type || '', e.cls || '', t.title || '', t.sub || '',
-        String(t.dims || '').split('\n').join(' + '),
+        noMm(String(t.dims || '').split('\n').join(' + ')),
         pgs.length === 0 ? '' : (pgs.length === 1 ? String(pgs[0]) : pgs[0] + '\u2013' + pgs[pgs.length - 1]),
         e.srcFile || ''
       ];
@@ -681,8 +689,8 @@ class Component extends DCLogic {
       const t = this.typeOf(e);
       return {
         id: e.id, hasQty: !!e.qty, qtyLabel: e.qty ? this.qtyIn(e, null) + ' шт.' : '', type: e.type || '—', cls: e.cls || '—', title: t.title, sub: t.sub || '—',
-        dims: t.dims || '—', height: t.height || '—', mount: t.mount || '—',
-        floorLabel: e.rooms ? distinctOf(this.roomsFor(e, null), 'floor').join(', ') + ' этаж' : floorLabel(e.floor),
+        dims: t.dims ? noMm(t.dims) : '—', height: t.height || '—', mount: t.mount || '—',
+        floorLabel: e.rooms ? floorsLabel(distinctOf(this.roomsFor(e, null), 'floor')) : floorLabel(e.floor),
         blockLabel: e.rooms ? blocksLabel(this.roomsFor(e, null), e.rooms) : (e.block == null ? '—' : e.block),
         img: e.design || (t.img && t.img[0] ? t.img[0] : ''), noImg: !(e.design || (t.img && t.img[0])),
         checked: !!this.state.kp[e.id], toggleKp: () => this.toggleKp(e.id),
@@ -739,9 +747,8 @@ class Component extends DCLogic {
         { k: 'Этаж', v: floorLabel(el.floor) },
         { k: 'Блок', v: el.block == null ? 'Улица' : String(el.block) },
         { k: 'Порядковый номер', v: String(el.n) + (/f$/.test(el.id) ? ' (флажок)' : '') },
-        { k: 'Количество', v: qtyOf(el) + ' шт.' },
-        { k: 'Реестр', v: 'стр. ' + el.regPage + (el.dupNote ? ' · ID встречается в реестре дважды' : '') }
-      ] : [];
+        { k: 'Количество', v: qtyOf(el) + ' шт.' }
+      ].concat(el.dupNote ? [{ k: 'Примечание', v: 'ID встречается в реестре дважды' }] : []) : [];
       d = {
         isEl: !!el, kicker: el ? 'Элемент навигации' : 'Тип элемента', heading: el ? el.id : (tk || '—'),
         type: tk || '', title: t.title, sub: t.sub || (t.cls || ''),
@@ -767,7 +774,11 @@ class Component extends DCLogic {
 
     const noFilters = !q && !typeSel && FACETS.every((f) => !(sel[f.key] || []).length);
     return {
-      stats: { shown: filtered.length, total: els.length, types: Object.keys(byType).length },
+      stats: {
+        shown: filtered.length, total: els.length, types: Object.keys(byType).length,
+        totalLabel: 'из ' + els.length + ' ' + plural(els.length, 'элемента', 'элементов', 'элементов'),
+        typesLabel: plural(Object.keys(byType).length, 'тип', 'типа', 'типов') + ' в выборке'
+      },
       q: q, onQ: (ev) => this.setState({ q: ev.target.value }),
       typeSel: typeSel, onType: (ev) => this.setState({ typeSel: ev.target.value }),
       typeOptions: typeOptions, facets: facets, activeChips: activeChips, noFilters: noFilters,
