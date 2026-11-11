@@ -433,7 +433,7 @@ window.__start=function(C){comp=new C({});render();if(comp.componentDidMount)com
 </script>
 <script>
 
-const DATA_URL = '/_blob/802d197f83270d160384b94143ebe5d5';
+const DATA_URL = '/_blob/e4a3d3b18e468f596ed4ced36ed6f447';
 const FLOOR_ORDER = ['0','1','2','3','5','6','street','any'];
 const LOC_KEYS = ['floor', 'block'];
 const NA = 'Не указано';
@@ -717,6 +717,8 @@ class Component extends DCLogic {
     const types = {};
     Object.keys(allTypes).forEach((k) => { if ((showStreet || allTypes[k].placement !== 'Уличный') && (showGobo || allTypes[k].cls !== 'gobo-1')) types[k] = allTypes[k]; });
     const filtered = els.filter((e) => this.matches(e, null)).sort(cmpEl);
+    const sampleDesign = {};
+    (data ? data.elements : []).forEach((e) => { if (e.design && !sampleDesign[e.type]) sampleDesign[e.type] = e.design; });
 
     const facets = FACETS.map((f) => {
       const all = {};
@@ -781,7 +783,7 @@ class Component extends DCLogic {
       const list = byType[k];
       return {
         type: k, cls: t.cls || '—', title: t.title, sub: t.sub || '—', dims: t.dims || 'Габариты не указаны',
-        img: t.img && t.img[0] ? t.img[0] : '', noImg: !(t.img && t.img[0]),
+        img: sampleDesign[k] || '', noImg: !sampleDesign[k],
         countLabel: list.reduce((s, e) => s + this.qtyIn(e, null), 0) + ' шт. в выборке',
         ids: list.map((e) => ({ id: e.id, open: openEl(e.id) })),
         open: () => { hashSet(k); this.setState({ open: { kind: 'type', id: k }, showSpec: false, shareMsg: '' }); }
@@ -829,8 +831,10 @@ class Component extends DCLogic {
       d = {
         isEl: !!el, kicker: el ? 'Элемент навигации' : 'Тип элемента', heading: el ? el.id : (tk || '—'),
         type: tk || '', title: t.title, sub: t.sub || (t.cls || ''),
-        hasImg: !!((el && el.design) || (t.img && t.img.length)),
-        imgs: el && el.design ? [{ src: el.design, cap: '' }] : (t.img || []).map((src) => ({ src: src, cap: 'Дизайн не найден — чертёж типа ' + (tk || '') + ' из спецификации' })),
+        hasImg: !!(el ? el.design : sampleDesign[tk]),
+        imgs: el
+          ? (el.design ? [{ src: el.design, cap: '' }] : [])
+          : (sampleDesign[tk] ? [{ src: sampleDesign[tk], cap: 'Пример дизайна элемента навигации типа ' + (tk || '') }] : []),
         elFacts: elFacts, specs: specRows,
         listUrl: t.listUrl || '', hasList: !!t.listUrl,
         hasSpec: !!el && sp.length > 0, hasSpecType: !el && sp.length > 0,
