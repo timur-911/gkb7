@@ -62,10 +62,28 @@ body:has(.overlay) .page{display:none!important}
 .sheet img,.sheet figure,.sheet .facttile{break-inside:avoid}
 .sheet table{max-height:none!important}
 }
+
+#gate{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--bg);z-index:100;box-sizing:border-box}
+#gate form{width:100%;max-width:340px;display:flex;flex-direction:column;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;box-sizing:border-box}
+#gate h1{margin:0;font-size:18px;font-weight:700}
+#gate p{margin:0;font-size:13px;color:var(--muted)}
+#gate label{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+#gate input{font:inherit;font-size:15px;min-height:44px;padding:0 12px;border:1px solid var(--border2);border-radius:10px;background:var(--surface);color:var(--text);box-sizing:border-box}
+#gate button{font:inherit;font-size:15px;font-weight:600;min-height:44px;border:0;border-radius:10px;background:var(--accent);color:var(--on-accent);cursor:pointer}
+#gate button:disabled{opacity:.6;cursor:default}
+#gate .err{font-size:13px;color:var(--danger-text);min-height:18px}
 </style>
 </head>
 <body>
-<div id="app"></div>
+<div id="gate"><form id="gateform" autocomplete="on">
+<h1>Каталог навигации ГКБ №7</h1>
+<p>Страница доступна по логину и паролю.</p>
+<label>Логин<input id="gl" name="username" type="text" autocomplete="username" required></label>
+<label>Пароль<input id="gp" name="password" type="password" autocomplete="current-password" required></label>
+<button id="gb" type="submit">Войти</button>
+<div class="err" id="ge"></div>
+</form></div>
+<div id="app" style="display:none"></div>
 <noscript>Для работы каталога нужен JavaScript.</noscript>
 <script type="text/plain" id="tpl">
 <div style="font-family: Inter, system-ui, sans-serif; color: var(--text); background: var(--bg); min-height: 100vh">
@@ -915,7 +933,41 @@ class Component extends DCLogic {
   }
 }
 
-window.__start(Component);
+window.__boot=function(){window.__start(Component);};
+</script>
+<script>
+(function(){
+var K='gkb7-auth';
+var f=document.getElementById('gateform'),gl=document.getElementById('gl'),gp=document.getElementById('gp'),gb=document.getElementById('gb'),ge=document.getElementById('ge');
+function b64(s){var r=atob(s),a=new Uint8Array(r.length);for(var i=0;i<r.length;i++)a[i]=r.charCodeAt(i);return a;}
+function unlock(login,pass){
+  var e=window.NAV_ENC,enc=new TextEncoder();
+  return crypto.subtle.importKey('raw',enc.encode(login+'\n'+pass),'PBKDF2',false,['deriveKey'])
+    .then(function(km){return crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(e.s),iterations:e.n,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);})
+    .then(function(k){return crypto.subtle.decrypt({name:'AES-GCM',iv:b64(e.i)},k,b64(e.c));})
+    .then(function(pt){return JSON.parse(new TextDecoder().decode(pt));});
+}
+function open_(data,login,pass){
+  window.NAV_DATA=data;
+  try{sessionStorage.setItem(K,JSON.stringify([login,pass]));}catch(e){}
+  var g=document.getElementById('gate');if(g)g.remove();
+  document.getElementById('app').style.display='';
+  window.__boot();
+}
+function tryLogin(login,pass,quiet){
+  gb.disabled=true;ge.textContent=quiet?'':'Проверяем…';
+  return unlock(login,pass).then(function(d){open_(d,login,pass);},function(){
+    gb.disabled=false;
+    if(!quiet){ge.textContent='Неверный логин или пароль';gp.value='';gp.focus();}
+    else{ge.textContent='';try{sessionStorage.removeItem(K);}catch(e){}}
+  });
+}
+f.addEventListener('submit',function(ev){ev.preventDefault();tryLogin(gl.value.trim(),gp.value,false);});
+var saved=null;try{saved=JSON.parse(sessionStorage.getItem(K)||'null');}catch(e){}
+if(saved&&saved.length===2){tryLogin(saved[0],saved[1],true).then(function(){gb.disabled=false;});}
+else{gl.focus();}
+})();
 </script>
 </body>
 </html>
+
