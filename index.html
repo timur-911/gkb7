@@ -651,6 +651,7 @@ class Component extends DCLogic {
   logExport(rec) {
     const body = { at: new Date().toISOString(), file: rec.file, count: rec.count, head: rec.head, rows: rec.rows, links: rec.links };
     try {
+      body.kind = 'export';
       if (typeof window !== 'undefined' && window.KP_USER) body.userName = window.KP_USER;
       const sync = (typeof window !== 'undefined' && window.KP_SYNC) || null;
       if (sync && sync.url) {
@@ -960,6 +961,11 @@ function unlock(login,pass){
 }
 function open_(data,login,pass){
   window.NAV_DATA=data;window.KP_USER=login;
+  try{
+    var sy=window.KP_SYNC;
+    if(sy&&sy.url){fetch(sy.url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({key:sy.key||'',kind:'login',at:new Date().toISOString(),user:login,ua:navigator.userAgent})}).catch(function(){});}
+  }catch(err){}
   try{sessionStorage.setItem(K,JSON.stringify([login,pass]));}catch(e){}
   var g=document.getElementById('gate');if(g)g.remove();
   document.getElementById('app').style.display='';
