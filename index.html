@@ -651,6 +651,7 @@ class Component extends DCLogic {
   logExport(rec) {
     const body = { at: new Date().toISOString(), file: rec.file, count: rec.count, head: rec.head, rows: rec.rows, links: rec.links };
     try {
+      if (typeof window !== 'undefined' && window.KP_USER) body.userName = window.KP_USER;
       const sync = (typeof window !== 'undefined' && window.KP_SYNC) || null;
       if (sync && sync.url) {
         const payload = Object.assign({ key: sync.key || '' }, body);
@@ -941,14 +942,24 @@ var K='gkb7-auth';
 var f=document.getElementById('gateform'),gl=document.getElementById('gl'),gp=document.getElementById('gp'),gb=document.getElementById('gb'),ge=document.getElementById('ge');
 function b64(s){var r=atob(s),a=new Uint8Array(r.length);for(var i=0;i<r.length;i++)a[i]=r.charCodeAt(i);return a;}
 function unlock(login,pass){
-  var e=window.NAV_ENC,enc=new TextEncoder();
-  return crypto.subtle.importKey('raw',enc.encode(login+'\n'+pass),'PBKDF2',false,['deriveKey'])
-    .then(function(km){return crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(e.s),iterations:e.n,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);})
-    .then(function(k){return crypto.subtle.decrypt({name:'AES-GCM',iv:b64(e.i)},k,b64(e.c));})
-    .then(function(pt){return JSON.parse(new TextDecoder().decode(pt));});
+  var e=window.NAV_ENC,enc=new TextEncoder(),raw=enc.encode(login+'\n'+pass);
+  return crypto.subtle.importKey('raw',raw,'PBKDF2',false,['deriveKey']).then(function(km){
+    var i=-1;
+    function step(){
+      i++;
+      if(i>=e.k.length)return Promise.reject(new Error('no'));
+      var ent=e.k[i];
+      return crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(ent.s),iterations:e.n,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt'])
+        .then(function(k){return crypto.subtle.decrypt({name:'AES-GCM',iv:b64(ent.i)},k,b64(ent.w));})
+        .then(function(mk){return crypto.subtle.importKey('raw',mk,{name:'AES-GCM'},false,['decrypt']);})
+        .then(function(mkey){return crypto.subtle.decrypt({name:'AES-GCM',iv:b64(e.i)},mkey,b64(e.c));})
+        .then(function(pt){return JSON.parse(new TextDecoder().decode(pt));},step);
+    }
+    return step();
+  });
 }
 function open_(data,login,pass){
-  window.NAV_DATA=data;
+  window.NAV_DATA=data;window.KP_USER=login;
   try{sessionStorage.setItem(K,JSON.stringify([login,pass]));}catch(e){}
   var g=document.getElementById('gate');if(g)g.remove();
   document.getElementById('app').style.display='';
