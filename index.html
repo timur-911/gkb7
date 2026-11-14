@@ -474,6 +474,8 @@ const EMPTY_TYPE = { title: 'Тип не указан', sub: null, cls: null, pl
 const typeNum = (k) => k ? parseInt(String(k).replace('type_', ''), 10) : 999;
 const floorLabel = (f) => f === 'any' ? 'Все этажи' : f === 'street' ? 'Улица' : f + ' этаж';
 const qtyOf = (e) => e.qty || 1;
+const floorCell = (f) => f === 'any' ? 'Все' : f === 'street' ? 'Улица' : String(f);
+const floorsCell = (fs) => fs.join(', ');
 const floorsLabel = (fs) => fs.join(', ') + (fs.length > 1 ? ' этажи' : ' этаж');
 const blocksLabel = (part, all) => { const p = distinctOf(part, 'block'); return p.length && p.length === distinctOf(all, 'block').length ? 'Все блоки' : p.join(', '); };
 const platesOf = (rooms) => Object.keys(rooms.reduce((m, r) => { m[r.floor + '|' + r.block + '|' + r.plate] = 1; return m; }, {})).length;
@@ -634,7 +636,7 @@ class Component extends DCLogic {
       const rms = e.rooms ? this.roomsFor(e, null) : null;
       return [
         e.id,
-        rms ? floorsLabel(distinctOf(rms, 'floor')) : floorLabel(e.floor),
+        rms ? floorsCell(distinctOf(rms, 'floor')) : floorCell(e.floor),
         rms ? blocksLabel(rms, e.rooms) : (e.block == null ? '\u0423\u043b\u0438\u0446\u0430' : String(e.block)),
         e.type || '', e.cls || '', t.title || '', t.sub || '',
         noMm(String(t.dims || '').split('\n').join(' + ')),
@@ -789,7 +791,7 @@ class Component extends DCLogic {
       return {
         id: e.id, hasQty: !!e.qty, qtyLabel: e.qty ? this.qtyIn(e, null) + ' шт.' : '', type: e.type || '—', cls: e.cls || '—', title: t.title, sub: t.sub || '—',
         dims: t.dims ? noMm(t.dims) : '—', height: t.height || '—', mount: t.mount || '—',
-        floorLabel: e.rooms ? floorsLabel(distinctOf(this.roomsFor(e, null), 'floor')) : floorLabel(e.floor),
+        floorLabel: e.rooms ? floorsCell(distinctOf(this.roomsFor(e, null), 'floor')) : floorCell(e.floor),
         blockLabel: e.rooms ? blocksLabel(this.roomsFor(e, null), e.rooms) : (e.block == null ? '—' : e.block),
         img: e.design || (t.img && t.img[0] ? t.img[0] : ''), noImg: !(e.design || (t.img && t.img[0])),
         checked: !!this.state.kp[e.id], toggleKp: () => this.toggleKp(e.id),
