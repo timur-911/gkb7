@@ -979,7 +979,7 @@ function tryLogin(login,pass,quiet){
     else{ge.textContent='';try{sessionStorage.removeItem(K);}catch(e){}}
   });
 }
-f.addEventListener('submit',function(ev){ev.preventDefault();tryLogin(gl.value.trim(),gp.value,false);});
+f.addEventListener('submit',function(ev){ev.preventDefault();tryLogin(gl.value.trim(),gp.value.trim(),false);});
 var saved=null;try{saved=JSON.parse(sessionStorage.getItem(K)||'null');}catch(e){}
 if(saved&&saved.length===2){tryLogin(saved[0],saved[1],true).then(function(){gb.disabled=false;});}
 else{gl.focus();}
